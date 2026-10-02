@@ -68,6 +68,20 @@ final class NitroidNative: NSObject, FlutterPlugin {
       AudioServicesPlaySystemSound(1057)
       result(true)
     case "permissions": result([String: Bool]())
+    case "appInfo":
+      let info = Bundle.main.infoDictionary ?? [:]
+      result([
+        "version": info["CFBundleShortVersionString"] as? String ?? "",
+        "build": info["CFBundleVersion"] as? String ?? "",
+        "abis": ["arm64"],
+      ])
+    case "openUrl":
+      guard let raw = args["url"] as? String, raw.hasPrefix("https://"), let url = URL(string: raw) else {
+        result(false)
+        return
+      }
+      UIApplication.shared.open(url, options: [:], completionHandler: nil)
+      result(true)
     default: result(FlutterMethodNotImplemented)
     }
   }

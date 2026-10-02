@@ -34,6 +34,9 @@ class MainActivity : FlutterActivity() {
                 "vibrate" -> result.success(Actions.vibrate(this, (call.argument<Int>("ms") ?: 200).toLong(), call.argument("amplitude") ?: 255))
                 "tone" -> result.success(Actions.tone(call.argument("ms") ?: 500))
                 "requestPermission" -> result.success(requestRuntimePermission(call.argument("name") ?: ""))
+                "appInfo" -> result.success(Actions.appInfo(this))
+                "installApk" -> result.success(Actions.installApk(this, call.argument("path") ?: ""))
+                "openUrl" -> result.success(Actions.openUrl(this, call.argument("url") ?: ""))
                 else -> worker.execute {
                     val value = try {
                         handleBackground(call.method, call.arguments as? Map<*, *> ?: emptyMap<String, Any>())

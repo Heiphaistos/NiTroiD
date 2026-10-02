@@ -41,6 +41,7 @@ class _ReportScreenState extends State<ReportScreen> {
       if (mounted) setState(() => _progress = 'Analyse des applications…');
       final db = await ThreatDb.load();
       for (final a in await Native.apps(includeSystem: true)) {
+        if (a.package == 'com.heiphaistos.nitroid') continue;
         final r = assessApp(a, db);
         if (r.level != 'ok') flagged.add((a.label, a.package, r.score, r.reasons));
       }

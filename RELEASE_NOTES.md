@@ -1,3 +1,17 @@
+## NiTroiD 0.2.0
+
+### Téléchargement
+- APK universel allégé (ARM uniquement) : environ 20 Mo de moins. Préférez l’APK **arm64** (19 Mo) sur un téléphone récent.
+- Si le téléchargement semble bloqué sur le dernier Mo : ouvrez les téléchargements du navigateur, Chrome attend souvent une confirmation (« Télécharger quand même ») après son contrôle de sécurité.
+
+### Nouveautés
+- **Mise à jour intégrée** : NiTroiD vérifie les nouvelles versions, télécharge l’APK adapté au téléphone et lance l’installation, sans passer par le navigateur.
+- **Confidentialité** : qui a accès à la localisation, la caméra, le micro, les SMS, les contacts, l’écran…
+- **Appareils du réseau** : liste les appareils connectés au Wi-Fi (box, PC, iPhone, caméras, imprimantes) pour repérer un intrus.
+- **Test du chargeur et du câble** : mesure le courant de charge pendant 30 s et donne un verdict.
+- Écran **À propos** avec version, liens et signalement de bug.
+- NiTroiD ne se signale plus lui-même dans l’analyse de sécurité.
+
 ## NiTroiD 0.1.1
 
 - Correctif : la section « Réseau mobile » ne s’interrompt plus sur les téléphones qui protègent l’état des données mobiles.

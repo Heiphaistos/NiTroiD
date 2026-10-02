@@ -15,6 +15,8 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
 import android.provider.Settings
+import androidx.core.content.FileProvider
+import java.io.File
 
 /** Actions qui touchent l'interface ou le matériel : thread principal. */
 object Actions {
@@ -92,5 +94,33 @@ object Actions {
         true
     } catch (_: Throwable) {
         false
+    }
+
+    fun appInfo(ctx: Context): Map<String, Any?> {
+        val info = ctx.packageManager.getPackageInfo(ctx.packageName, 0)
+        val code = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) info.longVersionCode else @Suppress("DEPRECATION") info.versionCode.toLong()
+        return mapOf("version" to info.versionName, "build" to code, "abis" to Build.SUPPORTED_ABIS.toList())
+    }
+
+    fun openUrl(activity: Activity, url: String): Boolean =
+        (url.startsWith("https://") || url.startsWith("http://")) && start(activity, Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+
+    /**
+     * Ouvre l'installateur Android sur un APK téléchargé dans cache/updates.
+     * Renvoie "permission" si l'utilisateur doit d'abord autoriser NiTroiD à installer des applis.
+     */
+    fun installApk(activity: Activity, path: String): String {
+        val file = File(path)
+        val updates = File(activity.cacheDir, "updates").canonicalPath
+        if (!file.exists() || !file.canonicalPath.startsWith(updates) || !file.name.endsWith(".apk")) return "error"
+        if (!activity.packageManager.canRequestPackageInstalls()) {
+            val intent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse("package:${activity.packageName}"))
+            return if (start(activity, intent)) "permission" else "error"
+        }
+        val uri = FileProvider.getUriForFile(activity, "${activity.packageName}.updates", file)
+        val intent = Intent(Intent.ACTION_VIEW)
+            .setDataAndType(uri, "application/vnd.android.package-archive")
+            .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        return if (start(activity, intent)) "ok" else "error"
     }
 }

@@ -173,7 +173,7 @@ object Security {
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val installers = Apps.installCapable(ctx).filter { !Apps.isSystem(pm, it) }
+            val installers = Apps.installCapable(ctx).filter { !Apps.isSystem(pm, it) && it != ctx.packageName }
             if (installers.isNotEmpty()) {
                 out += check("unknown", "Sources inconnues", "warn",
                     "Peuvent installer des APK : ${installers.joinToString(", ") { Apps.label(pm, it) }}.",

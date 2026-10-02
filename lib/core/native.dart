@@ -196,4 +196,15 @@ class Native {
   }
 
   static Future<String?> readFile(String path) => _call<String>('readFile', {'path': path});
+
+  /// Version installée et architectures prises en charge.
+  static Future<Map<String, dynamic>> appInfo() async {
+    final res = await _call<Map<dynamic, dynamic>>('appInfo');
+    return Map<String, dynamic>.from(res ?? const {});
+  }
+
+  static Future<String> installApk(String path) async =>
+      await _call<String>('installApk', {'path': path}) ?? 'error';
+
+  static Future<bool> openUrl(String url) async => await _call<bool>('openUrl', {'url': url}) ?? false;
 }

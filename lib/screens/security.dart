@@ -45,7 +45,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
       _risks = null;
     });
     final apps = await Native.apps(includeSystem: true);
-    final risks = [for (final a in apps) assessApp(a, _db)]..sort((a, b) => b.score.compareTo(a.score));
+    final risks = [for (final a in apps) if (a.package != 'com.heiphaistos.nitroid') assessApp(a, _db)]..sort((a, b) => b.score.compareTo(a.score));
     if (!mounted) return;
     setState(() {
       _scanned = apps.length;

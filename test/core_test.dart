@@ -4,9 +4,12 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nitroid/core/benchmark.dart';
 import 'package:nitroid/core/format.dart';
+import 'package:nitroid/core/lan.dart';
 import 'package:nitroid/core/native.dart';
+import 'package:nitroid/core/privacy.dart';
 import 'package:nitroid/core/report.dart';
 import 'package:nitroid/core/threats.dart';
+import 'package:nitroid/core/updater.dart';
 import 'package:nitroid/screens/dashboard.dart';
 
 AppEntry app(Map<String, dynamic> m) => AppEntry({
@@ -164,5 +167,68 @@ void main() {
 
   test('cpuWorkload est déterministe', () {
     expect(cpuWorkload(1), cpuWorkload(1));
+  });
+
+  group('mises à jour', () {
+    test('compareVersions', () {
+      expect(compareVersions('0.2.0', '0.1.1'), 1);
+      expect(compareVersions('v0.1.1', '0.1.1+2'), 0);
+      expect(compareVersions('0.1.9', '0.1.10'), -1);
+      expect(compareVersions('1.0', '0.9.9'), 1);
+    });
+
+    test('choix de l’APK selon l’architecture', () {
+      final r = ReleaseInfo('0.2.0', '', '', [
+        ReleaseAsset('NiTroiD-0.2.0-android.apk', 'u', 30),
+        ReleaseAsset('NiTroiD-0.2.0-android-arm64.apk', 'a64', 19),
+        ReleaseAsset('NiTroiD-0.2.0-android-armv7.apk', 'a7', 16),
+        ReleaseAsset('NiTroiD-0.2.0-ios-unsigned.ipa', 'i', 9),
+      ]);
+      expect(r.apkFor(['arm64-v8a', 'armeabi-v7a'])!.url, 'a64');
+      expect(r.apkFor(['armeabi-v7a'])!.url, 'a7');
+      expect(r.apkFor(['x86_64'])!.url, 'u');
+      expect(ReleaseInfo('1', '', '', []).apkFor(['arm64-v8a']), isNull);
+    });
+  });
+
+  group('confidentialité', () {
+    test('regroupe par type de donnée et ignore le système par défaut', () {
+      final apps = [
+        app({'pkg': 'a', 'label': 'Appareil photo', 'granted': ['android.permission.CAMERA']}),
+        app({'pkg': 'b', 'label': 'Espion', 'special': ['accessibility'], 'granted': ['android.permission.READ_SMS']}),
+        app({'pkg': 'c', 'label': 'Système', 'system': true, 'granted': ['android.permission.CAMERA']}),
+      ];
+      final g = groupByPrivacy(apps);
+      List<String> ids(String cat) => g.entries.firstWhere((e) => e.key.id == cat).value.map((a) => a.package).toList();
+      expect(ids('camera'), ['a']);
+      expect(ids('sms'), ['b']);
+      expect(ids('screen'), ['b']);
+      expect(ids('mic'), isEmpty);
+      final withSystem = groupByPrivacy(apps, includeSystem: true);
+      expect(withSystem.entries.firstWhere((e) => e.key.id == 'camera').value, hasLength(2));
+    });
+  });
+
+  group('réseau local', () {
+    test('subnetHosts', () {
+      final hosts = subnetHosts('192.168.1.42');
+      expect(hosts, hasLength(253));
+      expect(hosts.first, '192.168.1.1');
+      expect(hosts, isNot(contains('192.168.1.42')));
+      expect(subnetHosts('nope'), isEmpty);
+    });
+
+    test('type d’appareil deviné par les ports', () {
+      expect(LanHost('1', [62078], 3).kind, 'iPhone / iPad');
+      expect(LanHost('1', [53, 80], 3).kind, 'Box / routeur (DNS)');
+      expect(LanHost('1', [], 3).kind, 'Appareil');
+    });
+
+    test('verdict du test de chargeur', () {
+      expect(rateCharger(0).$1, 'bad');
+      expect(rateCharger(300).$1, 'bad');
+      expect(rateCharger(900).$1, 'warn');
+      expect(rateCharger(2000).$1, 'ok');
+    });
   });
 }

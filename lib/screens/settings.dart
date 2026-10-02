@@ -5,6 +5,7 @@ import '../core/native.dart';
 import '../core/settings_catalog.dart';
 import '../core/theme.dart';
 import '../widgets/common.dart';
+import 'about.dart';
 import 'apps.dart';
 
 class SettingsHub extends StatelessWidget {
@@ -18,6 +19,8 @@ class SettingsHub extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          _tile(context, Icons.info_outline, 'À propos & mises à jour', 'Version, mise à jour en un geste, liens',
+              const AboutScreen()),
           if (android) ...[
             _tile(context, Icons.home_outlined, 'Lanceurs (launchers)', 'Voir, ouvrir et changer le lanceur par défaut',
                 const LaunchersScreen()),

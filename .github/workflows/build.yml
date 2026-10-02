@@ -64,7 +64,8 @@ jobs:
           NITROID_KEY_ALIAS: ${{ secrets.NITROID_KEY_ALIAS }}
           NITROID_KEY_PASSWORD: ${{ secrets.NITROID_KEY_PASSWORD }}
         run: |
-          flutter build apk --release
+          # Universel limité à ARM : aucun téléphone x86 récent, et ~20 Mo de moins à télécharger.
+          flutter build apk --release --target-platform android-arm,android-arm64
           mkdir -p dist
           cp build/app/outputs/flutter-apk/app-release.apk "dist/NiTroiD-${{ steps.version.outputs.version }}-android.apk"
           flutter build apk --release --split-per-abi

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../core/format.dart';
+import '../core/lan.dart';
 import '../core/native.dart';
 import '../core/theme.dart';
 import '../widgets/common.dart';
@@ -161,6 +162,11 @@ class _BatteryScreenState extends State<BatteryScreen> with LivePolling {
   final _current = <double>[];
   final _power = <double>[];
 
+  /// Test du chargeur : 30 mesures (une par seconde) pendant la charge.
+  static const _testSamples = 30;
+  List<double>? _test;
+  (String, String)? _verdict;
+
   @override
   void initState() {
     super.initState();
@@ -171,6 +177,21 @@ class _BatteryScreenState extends State<BatteryScreen> with LivePolling {
   void onLive(Map<String, dynamic> data) {
     final ma = (data['batteryCurrentMa'] as num?)?.toDouble();
     final mv = (data['batteryVoltageMv'] as num?)?.toDouble();
+    final test = _test;
+    if (test != null) {
+      if (data['charging'] != true) {
+        _test = null;
+        _verdict = ('bad', 'Test interrompu : le téléphone n’est plus branché.');
+      } else if (ma != null) {
+        test.add(ma.abs());
+        if (test.length >= _testSamples) {
+          final avg = test.reduce((a, b) => a + b) / test.length;
+          final (status, text) = rateCharger(avg);
+          _verdict = (status, 'Moyenne ${avg.round()} mA — $text');
+          _test = null;
+        }
+      }
+    }
     if (ma != null) {
       _current.add(ma);
       if (_current.length > 90) _current.removeAt(0);
@@ -209,6 +230,37 @@ class _BatteryScreenState extends State<BatteryScreen> with LivePolling {
               const Text('Courant (positif = charge)', style: TextStyle(color: NxColors.muted, fontSize: 12)),
               const SizedBox(height: 6),
               Sparkline(_current, color: NxColors.ok),
+            ],
+            if (ma != null) ...[
+              const Divider(height: 28),
+              const Text('Test du chargeur et du câble', style: TextStyle(fontWeight: FontWeight.w700)),
+              const SizedBox(height: 4),
+              const Text('Branche le chargeur, laisse l’écran allumé 30 s sans utiliser le téléphone.',
+                  style: TextStyle(color: NxColors.muted, fontSize: 12)),
+              const SizedBox(height: 8),
+              if (_test != null) ...[
+                LinearProgressIndicator(value: _test!.length / _testSamples),
+                const SizedBox(height: 6),
+                Text('Mesure… ${_test!.length}/$_testSamples s', style: const TextStyle(fontSize: 12)),
+              ] else
+                OutlinedButton.icon(
+                  onPressed: live['charging'] == true
+                      ? () => setState(() {
+                            _test = [];
+                            _verdict = null;
+                          })
+                      : null,
+                  icon: const Icon(Icons.power),
+                  label: Text(live['charging'] == true ? 'Lancer le test (30 s)' : 'Branche le chargeur pour tester'),
+                ),
+              if (_verdict != null) ...[
+                const SizedBox(height: 8),
+                Row(children: [
+                  StatusDot(_verdict!.$1),
+                  const SizedBox(width: 8),
+                  Expanded(child: Text(_verdict!.$2, style: const TextStyle(fontSize: 13))),
+                ]),
+              ],
             ],
           ]),
         ),

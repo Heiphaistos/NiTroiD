@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import '../core/format.dart';
 import '../core/native.dart';
 import '../core/theme.dart';
+import '../core/updater.dart';
 import '../widgets/common.dart';
+import 'about.dart';
 import 'diagnostic.dart';
 import 'report.dart';
 import 'security.dart';
@@ -44,11 +46,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
   final _currentHistory = <double>[];
   Timer? _timer;
   bool _loading = true;
+  ReleaseInfo? _update;
 
   @override
   void initState() {
     super.initState();
     _load();
+    _checkUpdate();
     _timer = Timer.periodic(const Duration(seconds: 2), (_) => _poll());
   }
 
@@ -67,6 +71,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
       _loading = false;
     });
     await _poll();
+  }
+
+  /// Vérification silencieuse : en cas d'échec (hors ligne…), rien ne s'affiche.
+  Future<void> _checkUpdate() async {
+    try {
+      final results = await Future.wait([Updater.latest(), Native.appInfo()]);
+      final release = results[0] as ReleaseInfo;
+      final current = (results[1] as Map<String, dynamic>)['version']?.toString() ?? '';
+      if (mounted && current.isNotEmpty && compareVersions(release.version, current) > 0) {
+        setState(() => _update = release);
+      }
+    } catch (_) {}
   }
 
   Future<void> _poll() async {
@@ -133,6 +149,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
               child: ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
+                  if (_update != null) ...[
+                    NxCard(
+                      onTap: () => _open(AboutScreen(release: _update)),
+                      child: Row(children: [
+                        const Icon(Icons.system_update, color: NxColors.accent),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text('NiTroiD ${_update!.version} est disponible — toucher pour mettre à jour',
+                              style: const TextStyle(fontWeight: FontWeight.w700)),
+                        ),
+                        const Icon(Icons.chevron_right),
+                      ]),
+                    ),
+                    const SizedBox(height: 12),
+                  ],
                   NxCard(
                     child: Row(children: [
                       RingGauge(value: score / 100, label: 'santé'),

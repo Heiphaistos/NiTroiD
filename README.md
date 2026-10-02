@@ -31,6 +31,10 @@ dangereux… et donne accès aux menus cachés et réglages avancés.
 | Benchmark CPU mono/multi, mémoire, stockage | ✅ | ✅ |
 | Outils réseau : ping, DNS, port, IP publique, débit ; analyseur Wi-Fi | ✅ | ✅ (sans scan Wi-Fi) |
 | logcat, dumpsys, explorateur /proc & /sys, getprop | ✅ | — |
+| Confidentialité : qui a accès à la caméra, au micro, aux SMS, à la localisation… | ✅ | — |
+| Appareils connectés au réseau Wi-Fi (détection d’intrus) | ✅ | ✅ |
+| Test du chargeur et du câble (courant de charge) | ✅ | — |
+| Mise à jour intégrée depuis les releases GitHub | ✅ | lien vers la release |
 | Rapport TXT / Markdown / JSON partageable | ✅ | ✅ |
 
 ### Ce qu’Android et iOS interdisent (et comment NiTroiD s’adapte)
@@ -48,7 +52,9 @@ dangereux… et donne accès aux menus cachés et réglages avancés.
 Télécharger la dernière version sur la [page des releases](https://github.com/Heiphaistos/NiTroiD/releases)
 ou sur [nitrite.heiphaistos.org/telechargement](https://nitrite.heiphaistos.org/telechargement/).
 
-- **Android 8.0+** : installer `NiTroiD-x.y.z-android.apk` (autoriser l’installation depuis le navigateur).
+- **Android 8.0+** : installer `NiTroiD-x.y.z-android-arm64.apk` (téléphones récents) ou `NiTroiD-x.y.z-android.apk`
+  (universel). Si le téléchargement reste bloqué à la fin, ouvrir les téléchargements du navigateur et confirmer
+  « Télécharger quand même ». Ensuite, les mises à jour se font depuis l’app (Réglages › À propos & mises à jour).
 - **iOS 16+** : `NiTroiD-x.y.z-ios-unsigned.ipa` s’installe avec AltStore, SideStore, Sideloadly ou TrollStore
   (une publication App Store nécessite un compte Apple Developer).
 

@@ -11,6 +11,8 @@ import '../core/native.dart';
 import '../core/theme.dart';
 import '../widgets/common.dart';
 import 'apps.dart';
+import 'lan.dart';
+import 'privacy.dart';
 import 'report.dart';
 
 class ToolsHub extends StatelessWidget {
@@ -24,6 +26,7 @@ class ToolsHub extends StatelessWidget {
         ('Applications', [
           (Icons.apps, 'Gestionnaire d’applications', 'Lister, analyser, désinstaller', const AppsScreen()),
           (Icons.timer_outlined, 'Temps d’écran', 'Utilisation par application', const UsageScreen()),
+          (Icons.privacy_tip_outlined, 'Confidentialité', 'Qui a accès à la caméra, au micro, aux SMS…', const PrivacyScreen()),
         ]),
       ('Tests matériel', [
         (Icons.palette_outlined, 'Écran : pixels morts', 'Couleurs plein écran', const ScreenTest()),
@@ -35,6 +38,7 @@ class ToolsHub extends StatelessWidget {
       ]),
       ('Réseau', [
         (Icons.network_ping, 'Outils réseau', 'Ping, DNS, port, IP publique, débit', const NetworkTools()),
+        (Icons.lan_outlined, 'Appareils du réseau', 'Qui est connecté à ton Wi-Fi', const LanScreen()),
         if (android) (Icons.wifi_find, 'Analyseur Wi-Fi', 'Réseaux voisins, canaux, signal', const WifiScanScreen()),
       ]),
       if (android)
