@@ -46,7 +46,8 @@ jobs:
           channel: stable
           cache: true
       - id: version
-        run: echo "version=$(grep '^version:' pubspec.yaml | sed 's/version: *//; s/+.*//')" >> "$GITHUB_OUTPUT"
+        run: |
+          echo "version=$(grep '^version:' pubspec.yaml | sed 's/version: *//; s/+.*//')" >> "$GITHUB_OUTPUT"
       - name: Clé de signature (si configurée)
         env:
           KEYSTORE_BASE64: ${{ secrets.NITROID_KEYSTORE_BASE64 }}
