@@ -5,6 +5,7 @@ import '../core/theme.dart';
 import '../core/threats.dart';
 import '../widgets/common.dart';
 import 'apps.dart';
+import 'root.dart';
 
 class SecurityScreen extends StatefulWidget {
   const SecurityScreen({super.key, this.autoScan = false});
@@ -85,7 +86,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
             if (Native.isAndroid) ...[
               NxCard(
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  const Row(children: [
+                  Row(children: [
                     Icon(Icons.radar, color: NxColors.primary),
                     SizedBox(width: 8),
                     Text('Analyse anti-malware', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
@@ -95,12 +96,12 @@ class _SecurityScreenState extends State<SecurityScreen> {
                     'Recherche des logiciels espions connus (paquets et certificats de signature), '
                     'des applications masquées, installées hors magasin ou disposant d’accès dangereux '
                     '(accessibilité, administrateur, lecture des notifications/SMS…).',
-                    style: const TextStyle(color: NxColors.muted, fontSize: 13),
+                    style: TextStyle(color: NxColors.muted, fontSize: 13),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     _db == null ? 'Chargement de la base…' : 'Base Échap : ${_db!.size} indicateurs (${_db!.fetched})',
-                    style: const TextStyle(fontSize: 12, color: NxColors.muted),
+                    style: TextStyle(fontSize: 12, color: NxColors.muted),
                   ),
                   const SizedBox(height: 12),
                   Row(children: [
@@ -162,13 +163,30 @@ class _SecurityScreenState extends State<SecurityScreen> {
               ],
             ] else
               NxCard(
-                child: const Text(
+                child: Text(
                   'iOS isole chaque application : aucune app ne peut lister ni analyser les autres. '
                   'NiTroiD vérifie donc l’intégrité du système (jailbreak, profils, code d’accès, VPN/proxy) '
                   'ci-dessous.',
                   style: TextStyle(color: NxColors.muted),
                 ),
               ),
+            const SectionHeader('Analyse approfondie'),
+            NxCard(
+              padding: EdgeInsets.zero,
+              child: ListTile(
+                leading: Icon(Native.isAndroid ? Icons.terminal : Icons.lock_open),
+                title: Text(Native.isAndroid ? 'Root — analyse détaillée' : 'Jailbreak — analyse détaillée',
+                    style: const TextStyle(fontWeight: FontWeight.w700)),
+                subtitle: Text(
+                    Native.isAndroid
+                        ? 'Magisk/KernelSU, apps avec accès, modules, bootloader'
+                        : 'Indices de jailbreak et intégrité du système',
+                    style: const TextStyle(fontSize: 12)),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const RootScreen())),
+              ),
+            ),
+            const SizedBox(height: 10),
             const SectionHeader('Intégrité de l’appareil'),
             if (checks == null) const Center(child: CircularProgressIndicator()),
             for (final c in checks ?? const <SecurityCheck>[])

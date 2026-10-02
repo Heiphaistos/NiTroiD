@@ -42,7 +42,7 @@ class _AppIconState extends State<AppIcon> {
       width: widget.size,
       height: widget.size,
       child: b == null
-          ? const Icon(Icons.android, color: NxColors.muted)
+          ? Icon(Icons.android, color: NxColors.muted)
           : Image.memory(b, gaplessPlayback: true, filterQuality: FilterQuality.medium),
     );
   }
@@ -188,7 +188,7 @@ class AppDetailScreen extends StatelessWidget {
               Expanded(
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Text(app.label, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
-                  Text(app.package, style: const TextStyle(color: NxColors.muted, fontSize: 12)),
+                  Text(app.package, style: TextStyle(color: NxColors.muted, fontSize: 12)),
                   const SizedBox(height: 6),
                   Row(children: [
                     StatusDot(risk.level),
@@ -239,7 +239,7 @@ class AppDetailScreen extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 3),
                     child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      const Text('•  ', style: TextStyle(color: NxColors.accent)),
+                      Text('•  ', style: TextStyle(color: NxColors.accent)),
                       Expanded(child: Text(r, style: const TextStyle(fontSize: 13))),
                     ]),
                   ),
@@ -272,7 +272,7 @@ class AppDetailScreen extends StatelessWidget {
           SectionHeader('Permissions accordées (${perms.length})'),
           NxCard(
             child: perms.isEmpty
-                ? const Text('Aucune permission sensible accordée.', style: TextStyle(color: NxColors.muted))
+                ? Text('Aucune permission sensible accordée.', style: TextStyle(color: NxColors.muted))
                 : Wrap(spacing: 6, runSpacing: 6, children: [
                     for (final p in perms)
                       Container(
@@ -345,7 +345,7 @@ class _UsageScreenState extends State<UsageScreen> with WidgetsBindingObserver {
           ? Padding(
               padding: const EdgeInsets.all(24),
               child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                const Icon(Icons.lock_clock, size: 48, color: NxColors.muted),
+                Icon(Icons.lock_clock, size: 48, color: NxColors.muted),
                 const SizedBox(height: 12),
                 const Text(
                   'Android protège ces statistiques. Autorise NiTroiD dans « Accès aux données d’utilisation », '

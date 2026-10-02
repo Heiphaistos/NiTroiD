@@ -1,3 +1,13 @@
+## NiTroiD 0.3.0
+
+### Nouveautés
+- **Thèmes** : une douzaine de thèmes (Cyan nuit, Minuit, Émeraude, Ambre, Rose néon, Violet, Sarcelle, Terminal, AMOLED noir, Clair…), avec aperçu et choix dans Réglages › Thème. Le choix est mémorisé.
+- **Root / Jailbreak — analyse détaillée** (Sécurité) : méthode de root (Magisk, KernelSU, APatch), applications qui demandent le superutilisateur, modules installés, état du bootloader et des partitions ; sur iOS, indices de jailbreak et intégrité.
+- **Affichage** : la barre de navigation d’Android (retour/accueil/récents) ne « fusionne » plus avec l’application — barres système transparentes et contrastées, cohérentes sur tous les écrans.
+
+### Signature (important)
+- Pour que les mises à jour s’installent **par-dessus** sans désinstaller, tous les APK doivent être signés avec la **même** clé. Voir le README (section Signature) : soit commiter la clé partagée, soit ajouter les secrets de signature au dépôt.
+
 ## NiTroiD 0.2.0
 
 ### Téléchargement

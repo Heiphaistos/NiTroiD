@@ -6,10 +6,13 @@ import '../core/settings_catalog.dart';
 import '../core/theme.dart';
 import '../widgets/common.dart';
 import 'about.dart';
+import 'theme_screen.dart';
 import 'apps.dart';
 
 class SettingsHub extends StatelessWidget {
-  const SettingsHub({super.key});
+  const SettingsHub({super.key, required this.themes});
+
+  final ThemeController themes;
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +22,8 @@ class SettingsHub extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          _tile(context, Icons.palette_outlined, 'Thème', 'Couleurs de l’application — ${themes.theme.name}',
+              ThemeScreen(themes: themes)),
           _tile(context, Icons.info_outline, 'À propos & mises à jour', 'Version, mise à jour en un geste, liens',
               const AboutScreen()),
           if (android) ...[
@@ -128,7 +133,7 @@ class _LaunchersScreenState extends State<LaunchersScreen> with WidgetsBindingOb
               children: [
                 NxCard(
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    const Text(
+                    Text(
                       'Android réserve le choix du lanceur à l’utilisateur : NiTroiD liste ceux qui sont installés '
                       'et ouvre directement l’écran système pour en changer.',
                       style: TextStyle(color: NxColors.muted, fontSize: 13),
@@ -318,7 +323,7 @@ class _TweaksScreenState extends State<TweaksScreen> with WidgetsBindingObserver
         child: NxCard(
           onTap: onTap,
           child: Row(children: [
-            const Icon(Icons.lock_outline, color: NxColors.warn),
+            Icon(Icons.lock_outline, color: NxColors.warn),
             const SizedBox(width: 12),
             Expanded(child: Text(text, style: const TextStyle(fontSize: 13))),
             const Icon(Icons.chevron_right),

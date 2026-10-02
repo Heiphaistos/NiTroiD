@@ -230,6 +230,7 @@ enum Info {
     case "display": return display()
     case "cameras": return cameras()
     case "features": return features()
+    case "root": return jailbreak()
     default: return []
     }
   }
@@ -391,6 +392,24 @@ enum Info {
         s.add("Retour haptique (Taptic Engine)", CHHapticEngine.capabilitiesForHardware().supportsHaptics)
         s.add("Biométrie", biometryLabel(bio.biometryType))
         s.add("Multitâche", UIDevice.current.isMultitaskingSupported)
+      },
+    ].compactMap { $0 }
+  }
+
+  static func jailbreak() -> [Section] {
+    let indicators = SecurityChecks.jailbreakIndicators()
+    return [
+      section("État") { s in
+        s.add("Appareil jailbreaké", indicators.isEmpty ? "non détecté" : "OUI")
+        s.add("Indices trouvés", indicators.isEmpty ? nil : indicators.count)
+        s.add("Débogueur attaché", Hardware.debuggerAttached())
+      },
+      indicators.isEmpty ? nil : section("Indices détectés") { s in
+        for i in indicators { s.add(i, "✓") }
+      },
+      section("Ce que cela implique") { s in
+        s.add("Bac à sable", indicators.isEmpty ? "intact" : "contourné : une app peut lire les autres")
+        s.add("Retrait", "Une restauration (DFU) via un ordinateur retire le jailbreak")
       },
     ].compactMap { $0 }
   }

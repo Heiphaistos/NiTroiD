@@ -82,14 +82,14 @@ class _LanScreenState extends State<LanScreen> {
                 _scanning
                     ? 'Analyse $_done/$_total — ${_hosts.length} appareil(s) trouvé(s)'
                     : '${_hosts.length} appareil(s) trouvé(s) sur le réseau.',
-                style: const TextStyle(color: NxColors.muted, fontSize: 12),
+                style: TextStyle(color: NxColors.muted, fontSize: 12),
               ),
               if (_scanning) ...[
                 const SizedBox(height: 8),
                 LinearProgressIndicator(value: _total == 0 ? null : _done / _total),
               ],
               const SizedBox(height: 8),
-              const Text(
+              Text(
                 'Un appareil inconnu sur ton Wi-Fi peut être un intrus : change alors le mot de passe de la box.',
                 style: TextStyle(fontSize: 11, color: NxColors.muted),
               ),
@@ -110,7 +110,7 @@ class _LanScreenState extends State<LanScreen> {
                     style: const TextStyle(fontSize: 12),
                   ),
                   isThreeLine: h.openPorts.isNotEmpty,
-                  trailing: Text('${h.latencyMs} ms', style: const TextStyle(color: NxColors.muted, fontSize: 12)),
+                  trailing: Text('${h.latencyMs} ms', style: TextStyle(color: NxColors.muted, fontSize: 12)),
                   onLongPress: () {
                     Clipboard.setData(ClipboardData(text: h.ip));
                     showSnack(context, '${h.ip} copié');

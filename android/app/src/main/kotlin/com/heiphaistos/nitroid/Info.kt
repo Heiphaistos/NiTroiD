@@ -48,6 +48,7 @@ object Info {
         "features" -> features(ctx)
         "media" -> media()
         "props" -> props()
+        "root" -> Security.rootSections(ctx)
         else -> emptyList()
     }
 

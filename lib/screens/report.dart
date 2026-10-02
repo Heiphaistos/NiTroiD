@@ -78,7 +78,7 @@ class _ReportScreenState extends State<ReportScreen> {
               child: Column(mainAxisSize: MainAxisSize.min, children: [
                 const CircularProgressIndicator(),
                 const SizedBox(height: 16),
-                Text(_progress, style: const TextStyle(color: NxColors.muted)),
+                Text(_progress, style: TextStyle(color: NxColors.muted)),
               ]),
             )
           : ListView(
@@ -91,7 +91,7 @@ class _ReportScreenState extends State<ReportScreen> {
                     Text(
                       '${r.sections.values.fold<int>(0, (a, l) => a + l.length)} sections · ${r.checks.length} contrôles'
                       '${Native.isAndroid ? ' · ${r.flaggedApps.length} app(s) à vérifier' : ''}',
-                      style: const TextStyle(color: NxColors.muted, fontSize: 12),
+                      style: TextStyle(color: NxColors.muted, fontSize: 12),
                     ),
                     const SizedBox(height: 14),
                     Wrap(spacing: 8, runSpacing: 8, children: [

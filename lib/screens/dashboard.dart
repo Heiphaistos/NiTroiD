@@ -153,7 +153,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     NxCard(
                       onTap: () => _open(AboutScreen(release: _update)),
                       child: Row(children: [
-                        const Icon(Icons.system_update, color: NxColors.accent),
+                        Icon(Icons.system_update, color: NxColors.accent),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text('NiTroiD ${_update!.version} est disponible — toucher pour mettre à jour',
@@ -173,9 +173,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           Text('${_dash['manufacturer'] ?? ''} ${_dash['model'] ?? ''}'.trim(),
                               style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
                           const SizedBox(height: 4),
-                          Text(_dash['os']?.toString() ?? '', style: const TextStyle(color: NxColors.muted)),
+                          Text(_dash['os']?.toString() ?? '', style: TextStyle(color: NxColors.muted)),
                           if (_dash['soc'] != null)
-                            Text(_dash['soc'].toString(), style: const TextStyle(color: NxColors.muted, fontSize: 12)),
+                            Text(_dash['soc'].toString(), style: TextStyle(color: NxColors.muted, fontSize: 12)),
                           const SizedBox(height: 10),
                           Wrap(spacing: 6, runSpacing: 6, children: [
                             _chip(bad == 0 && warn == 0 ? 'Aucun problème' : '$bad critique(s)',
@@ -241,7 +241,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 3),
                             child: Row(children: [
-                              SizedBox(width: 56, child: Text('Cœur $i', style: const TextStyle(fontSize: 12, color: NxColors.muted))),
+                              SizedBox(width: 56, child: Text('Cœur $i', style: TextStyle(fontSize: 12, color: NxColors.muted))),
                               Expanded(
                                 child: LinearProgressIndicator(
                                   value: i < maxFreqs.length && maxFreqs[i] > 0 ? freqs[i] / maxFreqs[i] : 0,

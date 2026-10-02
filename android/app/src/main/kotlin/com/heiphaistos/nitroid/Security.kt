@@ -61,6 +61,108 @@ object Security {
         return found
     }
 
+    /** Détermine le gestionnaire de root présent (ou null). */
+    private fun rootMethod(ctx: Context): String? {
+        val pm = ctx.packageManager
+        fun has(pkg: String) = try {
+            pm.getPackageInfo(pkg, 0); true
+        } catch (_: Throwable) {
+            false
+        }
+        return when {
+            File("/data/adb/ksu").exists() || has("me.weishu.kernelsu") -> "KernelSU"
+            File("/data/adb/ap").exists() || has("me.bmax.apatch") -> "APatch"
+            File("/data/adb/magisk").exists() || has("com.topjohnwu.magisk") || has("io.github.vvb2060.magisk") -> "Magisk"
+            has("eu.chainfire.supersu") -> "SuperSU"
+            suPaths.any { File(it).exists() } -> "su (méthode inconnue)"
+            else -> null
+        }
+    }
+
+    /** Détail complet root pour l'écran dédié (catégorie « root »). */
+    fun rootSections(ctx: Context): List<Map<String, Any>> {
+        val s = Sections()
+        val pm = ctx.packageManager
+        val indicators = rootIndicators(ctx)
+        val method = rootMethod(ctx)
+        val rooted = indicators.isNotEmpty()
+        s.section("État") {
+            add("Appareil rooté", if (rooted) "OUI" else "non détecté")
+            add("Méthode", method)
+            add("Indices trouvés", indicators.size.takeIf { it > 0 })
+            add("Bootloader", when (Sys.prop("ro.boot.flash.locked")) {
+                "1" -> "verrouillé"; "0" -> "DÉVERROUILLÉ"; else -> Sys.prop("ro.boot.verifiedbootstate").ifBlank { null }
+            })
+            add("SELinux", selinux())
+            add("Clé de build", if (Build.TAGS?.contains("test-keys") == true) "test-keys (custom)" else "release-keys")
+        }
+        if (indicators.isNotEmpty()) {
+            s.section("Indices détectés") {
+                indicators.forEach { add(it, "✓") }
+            }
+        }
+        // Gestionnaires de root / modules installés
+        s.section("Applications de root / modules") {
+            for ((pkg, name) in rootApps) {
+                try {
+                    val info = pm.getPackageInfo(pkg, 0)
+                    add(name, info.versionName ?: "installé")
+                } catch (_: Throwable) {
+                }
+            }
+            // Apps demandant explicitement l'accès superutilisateur.
+            val suPerms = setOf("android.permission.ACCESS_SUPERUSER", "com.topjohnwu.magisk.permission.SUPERUSER")
+            val requesters = try {
+                pm.getInstalledPackages(PackageManager.GET_PERMISSIONS).filter { p ->
+                    p.requestedPermissions?.any { it in suPerms } == true
+                }.map { Apps.label(pm, it.packageName) }
+            } catch (_: Throwable) {
+                emptyList()
+            }
+            if (requesters.isNotEmpty()) add("Apps demandant le superutilisateur", requesters.joinToString(", "))
+        }
+        // Modules Magisk/KernelSU si lisibles (souvent protégé par SELinux sans root).
+        val modulesDir = File("/data/adb/modules")
+        if (modulesDir.exists()) {
+            s.section("Modules installés (/data/adb/modules)") {
+                val mods = modulesDir.listFiles()?.filter { it.isDirectory } ?: emptyList()
+                if (mods.isEmpty()) add("Lecture", "dossier présent mais vide ou protégé")
+                for (m in mods) {
+                    val prop = Sys.read("${m.path}/module.prop", 2048)
+                    val name = prop?.lineSequence()?.firstOrNull { it.startsWith("name=") }?.substringAfter('=') ?: m.name
+                    val ver = prop?.lineSequence()?.firstOrNull { it.startsWith("version=") }?.substringAfter('=') ?: ""
+                    val disabled = File(m, "disable").exists()
+                    add(name, "$ver${if (disabled) " (désactivé)" else ""}")
+                }
+            }
+        }
+        s.section("Vérifications d'intégrité") {
+            add("busybox", if (listOf("/system/xbin/busybox", "/system/bin/busybox", "/data/adb/magisk/busybox").any { File(it).exists() }) "présent" else "absent")
+            add("Zygisk (Magisk)", if (File("/data/adb/magisk/zygisk").exists()) "présent" else null)
+            add("Partition /system", run {
+                val mounts = Sys.read("/proc/self/mounts", 256 * 1024)?.lines() ?: emptyList()
+                mounts.firstOrNull { it.split(' ').getOrNull(1) == "/system" }?.split(' ')
+                    ?.let { if (it.getOrNull(3)?.startsWith("rw") == true) "MODIFIABLE (rw)" else "lecture seule" } ?: "lecture seule"
+            })
+            add("Propriété ro.boot.verifiedbootstate", Sys.prop("ro.boot.verifiedbootstate").ifBlank { null })
+            add("Propriété ro.build.type", Sys.prop("ro.build.type").ifBlank { null })
+        }
+        return s.list
+    }
+
+    /** Intent pour ouvrir le gestionnaire de root, s'il est présent. */
+    fun rootManagerPackage(ctx: Context): String? {
+        val pm = ctx.packageManager
+        return listOf("com.topjohnwu.magisk", "io.github.vvb2060.magisk", "me.weishu.kernelsu", "me.bmax.apatch")
+            .firstOrNull {
+                try {
+                    pm.getPackageInfo(it, 0); true
+                } catch (_: Throwable) {
+                    false
+                }
+            }
+    }
+
     fun checks(ctx: Context): List<Map<String, Any?>> {
         val out = ArrayList<Map<String, Any?>>()
         val cr = ctx.contentResolver

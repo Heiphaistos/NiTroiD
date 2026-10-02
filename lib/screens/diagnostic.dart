@@ -46,7 +46,7 @@ class DiagnosticHub extends StatelessWidget {
                 child: Icon(icon),
               ),
               title: Text(title, style: const TextStyle(fontWeight: FontWeight.w700)),
-              subtitle: Text(sub, style: const TextStyle(fontSize: 12, color: NxColors.muted)),
+              subtitle: Text(sub, style: TextStyle(fontSize: 12, color: NxColors.muted)),
               trailing: const Icon(Icons.chevron_right),
               onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => page)),
             ),
@@ -122,7 +122,7 @@ class _CpuScreenState extends State<CpuScreen> with LivePolling {
               padding: const EdgeInsets.only(bottom: 12),
               child: NxCard(
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  const Text('Fréquence moyenne (MHz)', style: TextStyle(color: NxColors.muted, fontSize: 12)),
+                  Text('Fréquence moyenne (MHz)', style: TextStyle(color: NxColors.muted, fontSize: 12)),
                   const SizedBox(height: 8),
                   Sparkline(_avg),
                   const SizedBox(height: 12),
@@ -136,11 +136,11 @@ class _CpuScreenState extends State<CpuScreen> with LivePolling {
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Column(children: [
-                          Text('CPU$i', style: const TextStyle(fontSize: 11, color: NxColors.muted)),
+                          Text('CPU$i', style: TextStyle(fontSize: 11, color: NxColors.muted)),
                           Text(freqs[i] <= 0 ? 'repos' : formatFreqKhz(freqs[i]),
                               style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
                           if (i < maxF.length)
-                            Text('max ${formatFreqKhz(maxF[i])}', style: const TextStyle(fontSize: 10, color: NxColors.muted)),
+                            Text('max ${formatFreqKhz(maxF[i])}', style: TextStyle(fontSize: 10, color: NxColors.muted)),
                         ]),
                       ),
                   ]),
@@ -223,11 +223,11 @@ class _BatteryScreenState extends State<BatteryScreen> with LivePolling {
             const SizedBox(height: 4),
             Text(
               t == null ? '' : 'Température : ${t.toStringAsFixed(1)} °C',
-              style: const TextStyle(color: NxColors.muted, fontSize: 12),
+              style: TextStyle(color: NxColors.muted, fontSize: 12),
             ),
             if (_current.length > 2) ...[
               const SizedBox(height: 12),
-              const Text('Courant (positif = charge)', style: TextStyle(color: NxColors.muted, fontSize: 12)),
+              Text('Courant (positif = charge)', style: TextStyle(color: NxColors.muted, fontSize: 12)),
               const SizedBox(height: 6),
               Sparkline(_current, color: NxColors.ok),
             ],
@@ -235,7 +235,7 @@ class _BatteryScreenState extends State<BatteryScreen> with LivePolling {
               const Divider(height: 28),
               const Text('Test du chargeur et du câble', style: TextStyle(fontWeight: FontWeight.w700)),
               const SizedBox(height: 4),
-              const Text('Branche le chargeur, laisse l’écran allumé 30 s sans utiliser le téléphone.',
+              Text('Branche le chargeur, laisse l’écran allumé 30 s sans utiliser le téléphone.',
                   style: TextStyle(color: NxColors.muted, fontSize: 12)),
               const SizedBox(height: 8),
               if (_test != null) ...[
@@ -269,7 +269,7 @@ class _BatteryScreenState extends State<BatteryScreen> with LivePolling {
   }
 
   Widget _big(String label, String value) => Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(label, style: const TextStyle(color: NxColors.muted, fontSize: 12)),
+        Text(label, style: TextStyle(color: NxColors.muted, fontSize: 12)),
         Text(value, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
       ]);
 }
@@ -317,11 +317,11 @@ class _ThermalScreenState extends State<ThermalScreen> with LivePolling {
         children: [
           NxCard(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const Text('État thermique système', style: TextStyle(color: NxColors.muted, fontSize: 12)),
+              Text('État thermique système', style: TextStyle(color: NxColors.muted, fontSize: 12)),
               const SizedBox(height: 4),
               Text(live['thermalStatus']?.toString() ?? '—', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800)),
               if (live['thermalHeadroom'] != null)
-                Text('Marge avant bridage : ${live['thermalHeadroom']}', style: const TextStyle(color: NxColors.muted, fontSize: 12)),
+                Text('Marge avant bridage : ${live['thermalHeadroom']}', style: TextStyle(color: NxColors.muted, fontSize: 12)),
             ]),
           ),
           const SectionHeader('Capteurs de température'),
@@ -396,7 +396,7 @@ class _SensorsScreenState extends State<SensorsScreen> {
                           [s['kind'], s['vendor'], if (s['power'] != null) '${s['power']} mA']
                               .whereType<Object>()
                               .join(' · '),
-                          style: const TextStyle(fontSize: 12, color: NxColors.muted),
+                          style: TextStyle(fontSize: 12, color: NxColors.muted),
                         ),
                         trailing: s['live'] == true ? const Icon(Icons.play_circle_outline) : null,
                         onTap: s['live'] == true
@@ -447,7 +447,7 @@ class _SensorLiveScreenState extends State<SensorLiveScreen> {
   @override
   Widget build(BuildContext context) {
     const axes = ['X', 'Y', 'Z', 'W', 'V5', 'V6'];
-    const colors = [NxColors.primary, NxColors.accent, NxColors.secondary, NxColors.ok, NxColors.bad, NxColors.muted];
+    final colors = [NxColors.primary, NxColors.accent, NxColors.secondary, NxColors.ok, NxColors.bad, NxColors.muted];
     final unit = widget.sensor['unit']?.toString() ?? '';
     return Scaffold(
       appBar: AppBar(title: Text(widget.sensor['name']?.toString() ?? 'Capteur')),

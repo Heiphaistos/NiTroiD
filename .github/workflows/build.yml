@@ -53,13 +53,19 @@ jobs:
           KEYSTORE_BASE64: ${{ secrets.NITROID_KEYSTORE_BASE64 }}
         run: |
           if [ -n "$KEYSTORE_BASE64" ]; then
+            # Option B : clé privée via secret (prioritaire, recommandée).
             echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/nitroid.jks"
             echo "NITROID_KEYSTORE=$RUNNER_TEMP/nitroid.jks" >> "$GITHUB_ENV"
+            echo "Signature : clé privée (secret du dépôt)."
+          elif [ -f keystore/nitroid-shared.jks ]; then
+            # Option A : clé partagée commitée (stable, mais publique — comme Forge Audio).
+            # Le build.gradle.kts l'utilise automatiquement. Les mises à jour s'installent par-dessus.
+            echo "::warning::Clé PARTAGÉE du dépôt (keystore/nitroid-shared.jks) : stable mais publique, à remplacer par un secret."
           elif [ "${{ github.event_name }}" = "pull_request" ]; then
-            echo "::warning::Aucune clé NITROID_KEYSTORE_BASE64 : APK de test signé avec une clé de debug."
+            echo "::warning::Aucune clé de signature stable : APK de test signé avec une clé de debug."
           else
             # Une clé debug change à chaque machine : la mise à jour suivante refuserait de s'installer par-dessus.
-            echo "::error::Secret NITROID_KEYSTORE_BASE64 manquant : refus de publier un APK signé avec une clé debug."
+            echo "::error::Aucune clé de signature stable. Ajoutez le secret NITROID_KEYSTORE_BASE64, ou commitez keystore/nitroid-shared.jks (voir README › Signature)."
             exit 1
           fi
       - name: Compilation

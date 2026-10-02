@@ -123,8 +123,8 @@ class _AboutScreenState extends State<AboutScreen> {
               Expanded(
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   const Text('NiTroiD', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900)),
-                  Text('Version ${_version.isEmpty ? '…' : _version}', style: const TextStyle(color: NxColors.muted)),
-                  const Text('Édition mobile de NiTriTe', style: TextStyle(color: NxColors.muted, fontSize: 12)),
+                  Text('Version ${_version.isEmpty ? '…' : _version}', style: TextStyle(color: NxColors.muted)),
+                  Text('Édition mobile de NiTriTe', style: TextStyle(color: NxColors.muted, fontSize: 12)),
                 ]),
               ),
             ]),
@@ -151,7 +151,7 @@ class _AboutScreenState extends State<AboutScreen> {
                 if (r.notes.isNotEmpty) ...[
                   const SizedBox(height: 8),
                   Text(r.notes.split('\n## ').first.replaceAll('## ', '').trim(),
-                      maxLines: 8, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 12, color: NxColors.muted)),
+                      maxLines: 8, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12, color: NxColors.muted)),
                 ],
                 const SizedBox(height: 12),
                 if (_progress != null || _status != null) ...[
@@ -175,7 +175,7 @@ class _AboutScreenState extends State<AboutScreen> {
               ],
               if (_error != null) ...[
                 const SizedBox(height: 8),
-                Text(_error!, style: const TextStyle(color: NxColors.bad, fontSize: 12)),
+                Text(_error!, style: TextStyle(color: NxColors.bad, fontSize: 12)),
               ],
               const SizedBox(height: 8),
               OutlinedButton.icon(
@@ -204,7 +204,7 @@ class _AboutScreenState extends State<AboutScreen> {
             ]),
           ),
           const SectionHeader('Crédits'),
-          const NxCard(
+          NxCard(
             child: Text(
               'Indicateurs de logiciels espions : association Échap (stalkerware-indicators, licence CC-BY 4.0).\n'
               'Aucune donnée ne quitte le téléphone : NiTroiD ne contacte GitHub que pour les mises à jour '

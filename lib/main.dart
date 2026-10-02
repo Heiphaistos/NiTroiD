@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import 'core/theme.dart';
 import 'screens/dashboard.dart';
@@ -8,31 +7,36 @@ import 'screens/security.dart';
 import 'screens/settings.dart';
 import 'screens/tools.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor: Colors.transparent,
-    systemNavigationBarColor: NxColors.surface,
-  ));
-  runApp(const NitroidApp());
+  final themes = await ThemeController.load();
+  applySystemBars();
+  runApp(NitroidApp(themes: themes));
 }
 
 class NitroidApp extends StatelessWidget {
-  const NitroidApp({super.key});
+  const NitroidApp({super.key, required this.themes});
+
+  final ThemeController themes;
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'NiTroiD',
-      debugShowCheckedModeBanner: false,
-      theme: buildTheme(),
-      home: const HomeShell(),
+    return AnimatedBuilder(
+      animation: themes,
+      builder: (context, _) => MaterialApp(
+        title: 'NiTroiD',
+        debugShowCheckedModeBanner: false,
+        theme: buildTheme(themes.theme),
+        home: HomeShell(themes: themes),
+      ),
     );
   }
 }
 
 class HomeShell extends StatefulWidget {
-  const HomeShell({super.key});
+  const HomeShell({super.key, required this.themes});
+
+  final ThemeController themes;
 
   @override
   State<HomeShell> createState() => _HomeShellState();
@@ -41,12 +45,12 @@ class HomeShell extends StatefulWidget {
 class _HomeShellState extends State<HomeShell> {
   int _index = 0;
 
-  static const _pages = <Widget>[
-    DashboardScreen(),
-    DiagnosticHub(),
-    SecurityScreen(),
-    ToolsHub(),
-    SettingsHub(),
+  late final List<Widget> _pages = [
+    const DashboardScreen(),
+    const DiagnosticHub(),
+    const SecurityScreen(),
+    const ToolsHub(),
+    SettingsHub(themes: widget.themes),
   ];
 
   @override

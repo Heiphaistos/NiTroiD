@@ -59,7 +59,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
           : ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                const NxCard(
+                NxCard(
                   child: Text(
                     'Qui a accès à quoi : chaque catégorie liste les applications qui ont reçu l’autorisation. '
                     'Touche une application pour la révoquer ou la désinstaller.',
@@ -92,7 +92,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                         ),
                         children: [
                           if (entry.value.isEmpty)
-                            const Padding(
+                            Padding(
                               padding: EdgeInsets.all(16),
                               child: Text('Aucune application.', style: TextStyle(color: NxColors.muted)),
                             ),

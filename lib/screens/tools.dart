@@ -262,7 +262,7 @@ class _ActuatorTestState extends State<ActuatorTest> {
             child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
               const Text('Haut-parleur', style: TextStyle(fontWeight: FontWeight.w700)),
               const SizedBox(height: 4),
-              const Text('Émet un bip de test : il doit être net, sans grésillement.',
+              Text('Émet un bip de test : il doit être net, sans grésillement.',
                   style: TextStyle(color: NxColors.muted, fontSize: 12)),
               const SizedBox(height: 8),
               OutlinedButton.icon(
@@ -322,8 +322,8 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
           NxCard(
             child: Column(children: [
               Text(_results.isEmpty ? '—' : '$total',
-                  style: const TextStyle(fontSize: 44, fontWeight: FontWeight.w900, color: NxColors.primary)),
-              const Text('score NiTroiD', style: TextStyle(color: NxColors.muted)),
+                  style: TextStyle(fontSize: 44, fontWeight: FontWeight.w900, color: NxColors.primary)),
+              Text('score NiTroiD', style: TextStyle(color: NxColors.muted)),
               const SizedBox(height: 12),
               FilledButton.icon(
                 onPressed: _step == null ? _run : null,
@@ -341,7 +341,7 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
               subtitle: Text('${r.value.toStringAsFixed(1)} ${r.unit}'),
               trailing: Text('${r.score ?? ''}', style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
             ),
-          const Padding(
+          Padding(
             padding: EdgeInsets.all(8),
             child: Text(
               'Le score permet de comparer deux téléphones ou de repérer un appareil qui bride (chauffe, '
@@ -674,7 +674,7 @@ class DumpsysScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          const NxCard(
+          NxCard(
             child: Text(
               'dumpsys interroge directement les services internes d’Android. '
               'Il nécessite la permission DUMP (Paramétrage › Débloquer les accès).',

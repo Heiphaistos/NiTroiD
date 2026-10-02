@@ -39,7 +39,7 @@ class SectionHeader extends StatelessWidget {
           Expanded(
             child: Text(
               title.toUpperCase(),
-              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800, letterSpacing: 1.2, color: NxColors.muted),
+              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800, letterSpacing: 1.2, color: NxColors.muted),
             ),
           ),
           ?trailing,
@@ -67,7 +67,7 @@ class InfoSectionCard extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
               child: Text(section.title,
-                  style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15, color: NxColors.primary)),
+                  style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15, color: NxColors.primary)),
             ),
             for (final item in section.items) KeyValueRow(item.key, item.value),
           ],
@@ -97,7 +97,7 @@ class KeyValueRow extends StatelessWidget {
           children: [
             Expanded(
               flex: 5,
-              child: Text(label, style: const TextStyle(color: NxColors.muted, fontSize: 13)),
+              child: Text(label, style: TextStyle(color: NxColors.muted, fontSize: 13)),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -138,7 +138,7 @@ class MetricTile extends StatelessWidget {
     required this.label,
     required this.value,
     this.sub,
-    this.color = NxColors.primary,
+    this.color,
     this.progress,
     this.onTap,
   });
@@ -147,7 +147,7 @@ class MetricTile extends StatelessWidget {
   final String label;
   final String value;
   final String? sub;
-  final Color color;
+  final Color? color;
   final double? progress;
   final VoidCallback? onTap;
 
@@ -159,18 +159,18 @@ class MetricTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(children: [
-            Icon(icon, color: color, size: 20),
+            Icon(icon, color: color ?? NxColors.primary, size: 20),
             const SizedBox(width: 8),
             Expanded(
               child: Text(label,
-                  overflow: TextOverflow.ellipsis, style: const TextStyle(color: NxColors.muted, fontSize: 12)),
+                  overflow: TextOverflow.ellipsis, style: TextStyle(color: NxColors.muted, fontSize: 12)),
             ),
           ]),
           const SizedBox(height: 10),
           Text(value, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800)),
           if (sub != null) ...[
             const SizedBox(height: 2),
-            Text(sub!, style: const TextStyle(color: NxColors.muted, fontSize: 11), maxLines: 1, overflow: TextOverflow.ellipsis),
+            Text(sub!, style: TextStyle(color: NxColors.muted, fontSize: 11), maxLines: 1, overflow: TextOverflow.ellipsis),
           ],
           if (progress != null) ...[
             const SizedBox(height: 10),
@@ -179,8 +179,8 @@ class MetricTile extends StatelessWidget {
               child: LinearProgressIndicator(
                 value: progress!.clamp(0, 1),
                 minHeight: 6,
-                color: color,
-                backgroundColor: color.withValues(alpha: 0.15),
+                color: color ?? NxColors.primary,
+                backgroundColor: (color ?? NxColors.primary).withValues(alpha: 0.15),
               ),
             ),
           ],
@@ -209,7 +209,7 @@ class RingGauge extends StatelessWidget {
         child: Center(
           child: Column(mainAxisSize: MainAxisSize.min, children: [
             Text('${(value * 100).round()}', style: TextStyle(fontSize: size / 3.6, fontWeight: FontWeight.w900, color: color)),
-            Text(label, style: const TextStyle(fontSize: 11, color: NxColors.muted)),
+            Text(label, style: TextStyle(fontSize: 11, color: NxColors.muted)),
           ]),
         ),
       ),
@@ -252,15 +252,15 @@ class _RingPainter extends CustomPainter {
 
 /// Petite courbe d'historique (températures, fréquences, courant…).
 class Sparkline extends StatelessWidget {
-  const Sparkline(this.values, {super.key, this.color = NxColors.primary, this.height = 48});
+  const Sparkline(this.values, {super.key, this.color, this.height = 48});
 
   final List<double> values;
-  final Color color;
+  final Color? color;
   final double height;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(height: height, width: double.infinity, child: CustomPaint(painter: _SparkPainter(values, color)));
+    return SizedBox(height: height, width: double.infinity, child: CustomPaint(painter: _SparkPainter(values, color ?? NxColors.primary)));
   }
 }
 
@@ -325,7 +325,7 @@ class EmptyState extends StatelessWidget {
         child: Column(mainAxisSize: MainAxisSize.min, children: [
           Icon(icon, size: 48, color: NxColors.muted),
           const SizedBox(height: 12),
-          Text(text, textAlign: TextAlign.center, style: const TextStyle(color: NxColors.muted)),
+          Text(text, textAlign: TextAlign.center, style: TextStyle(color: NxColors.muted)),
         ]),
       ),
     );
