@@ -1,3 +1,14 @@
+## NiTroiD 0.5.0 — ADB sans PC
+
+### Droits ADB directement dans l'app (Android 11+)
+- **ADB sans fil** (Outils › Centre développeur) : NiTroiD s'associe au « Débogage sans fil » du téléphone lui-même. Le code à 6 chiffres se tape **dans la notification**, sans quitter les Paramètres. Plus besoin de PC ni de câble.
+- Avec ces droits : permissions avancées accordées en un geste, réglages cachés et options développeur, arrêt forcé / désactivation / désinstallation des applis système — tout ce qui exigeait le root.
+- **Terminal** : commandes shell avec le root s'il est présent, sinon avec l'ADB.
+- Le débogage sans fil se rallume tout seul après un changement de Wi-Fi (une fois la permission « réglages système » accordée).
+
+### Signature
+- Tous les APK sont signés avec la même clé depuis la 0.3.0 : la mise à jour s'installe par-dessus.
+
 ## NiTroiD 0.4.0 — édition développeur
 
 ### Centre développeur (Outils › Développeur, Android)
