@@ -47,9 +47,6 @@ const devGroups = <DevGroup>[
   DevGroup('Affichage & rendu', toggles: [
     DevToggle('system', 'show_touches', 'Afficher les appuis', desc: 'Un repère visuel à chaque toucher'),
     DevToggle('system', 'pointer_location', 'Position du pointeur', desc: 'Coordonnées et trace du doigt en haut de l’écran'),
-    DevToggle('global', 'debug.layout', 'Limites de mise en page', desc: 'Bordures des éléments d’interface'),
-    DevToggle('secure', 'debug_gpu_overdraw', 'Dépassement GPU (overdraw)', onValue: 'show', offValue: 'false'),
-    DevToggle('global', 'show_wifi_mac_randomization_status', 'Statut d’anonymisation MAC'),
   ], choices: [
     DevChoice('global', 'window_animation_scale', 'Animations des fenêtres', _animScales),
     DevChoice('global', 'transition_animation_scale', 'Animations de transition', _animScales),
