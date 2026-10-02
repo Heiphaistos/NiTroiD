@@ -66,21 +66,21 @@ object Dev {
         "android.permission.PACKAGE_USAGE_STATS",
     )
 
-    /** Accorde à NiTroiD les permissions avancées via root. Renvoie le détail par permission. */
+    /** Accorde à NiTroiD les permissions avancées via root, sinon via l'ADB sans fil. */
     fun grantSelf(ctx: Context): Map<String, Any> {
-        if (!Root.available()) return mapOf("root" to false, "results" to emptyList<Any>())
+        val mode = Priv.mode(ctx)
+        if (mode == "none") return mapOf("root" to false, "mode" to mode, "results" to emptyList<Any>())
         val pkg = ctx.packageName
         val results = ArrayList<Map<String, Any>>()
-        for (perm in devPermissions) {
-            val r = Root.exec("pm grant $pkg $perm", 10)
-            results.add(mapOf("perm" to perm.substringAfterLast('.'), "ok" to r.ok, "detail" to r.out.take(200)))
-        }
+        // pm grant / appops ne disent rien quand tout va bien : une sortie non vide = refus.
+        fun record(label: String, r: Root.Result) =
+            results.add(mapOf("perm" to label, "ok" to (r.ok && r.out.isBlank()), "detail" to r.out.take(200)))
+        for (perm in devPermissions) record(perm.substringAfterLast('.'), Priv.run(ctx, "pm grant $pkg $perm", 10))
         // AppOps pour les accès qui ne passent pas par pm grant.
         for ((op, label) in listOf("GET_USAGE_STATS" to "usage", "WRITE_SETTINGS" to "writeSettings")) {
-            val r = Root.exec("appops set $pkg $op allow", 8)
-            results.add(mapOf("perm" to label, "ok" to r.ok, "detail" to r.out.take(200)))
+            record(label, Priv.run(ctx, "appops set $pkg $op allow", 8))
         }
-        return mapOf("root" to true, "results" to results)
+        return mapOf("root" to (mode == "root"), "mode" to mode, "results" to results)
     }
 
     private fun readSetting(ctx: Context, ns: String, key: String): String? = try {
@@ -96,12 +96,13 @@ object Dev {
     /** Lit un lot de réglages « ns/key » (format "global:key"). */
     fun getSettings(ctx: Context, keys: List<String>): Map<String, String?> {
         val out = HashMap<String, String?>()
+        val priv by lazy { Priv.available(ctx) }
         for (full in keys) {
             val ns = full.substringBefore(':')
             val key = full.substringAfter(':')
-            out[full] = readSetting(ctx, ns, key) ?: Root.run {
-                if (available()) exec("settings get $ns $key", 6).out.takeIf { it.isNotBlank() && it != "null" } else null
-            }
+            out[full] = readSetting(ctx, ns, key) ?: if (priv) {
+                Priv.run(ctx, "settings get $ns $key", 6).out.takeIf { it.isNotBlank() && it != "null" }
+            } else null
         }
         return out
     }
@@ -125,19 +126,19 @@ object Dev {
             }
             return null
         } catch (_: Throwable) {
-            // 2) Repli root.
-            if (Root.available()) {
-                val r = Root.exec("settings put $ns $key $value", 8)
-                return if (r.ok) null else "Échec root : ${r.out.take(200)}"
+            // 2) Repli root ou ADB sans fil.
+            if (Priv.available(ctx)) {
+                val r = Priv.run(ctx, "settings put $ns $key $value", 8)
+                return if (r.ok && r.out.isBlank()) null else "Échec : ${r.out.take(200)}"
             }
             return "Permission requise : accorde WRITE_SECURE_SETTINGS (ADB ou root)."
         }
     }
 
-    /** Actions avancées sur une application (root requis). */
+    /** Actions avancées sur une application (root ou ADB sans fil). */
     fun appAction(ctx: Context, action: String, pkg: String): String {
         if (pkg.isBlank() || !Regex("^[A-Za-z0-9._]+$").matches(pkg)) return "Paquet invalide"
-        if (!Root.available()) return "Cette action nécessite le root."
+        if (!Priv.available(ctx)) return "Cette action nécessite le root ou l’ADB sans fil."
         val cmd = when (action) {
             "forceStop" -> "am force-stop $pkg"
             "clearData" -> "pm clear $pkg"
@@ -147,7 +148,8 @@ object Dev {
             "uninstallSystem" -> "pm uninstall -k --user 0 $pkg"
             else -> return "Action inconnue"
         }
-        val r = Root.exec(cmd, 20)
-        return if (r.ok) "ok" else "Échec : ${r.out.take(300)}"
+        val r = Priv.run(ctx, cmd, 20)
+        val failed = !r.ok || Regex("(?i)error|exception|failure|denied").containsMatchIn(r.out)
+        return if (failed) "Échec : ${r.out.take(300)}" else "ok"
     }
 }

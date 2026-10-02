@@ -7,6 +7,7 @@ import '../core/dev_catalog.dart';
 import '../core/native.dart';
 import '../core/theme.dart';
 import '../widgets/common.dart';
+import 'adb_wireless.dart';
 import 'settings.dart';
 
 /// Centre développeur : état root, octroi de permissions, options développeur,
@@ -89,8 +90,8 @@ class _DeveloperHubState extends State<DeveloperHub> with WidgetsBindingObserver
               Text(
                 root == true
                     ? 'NiTroiD peut s’accorder les permissions avancées et agir sur le système en un geste.'
-                    : 'Sans root, les permissions avancées (réglages système, journal complet, dumpsys) '
-                      's’accordent une fois depuis un PC via ADB.',
+                    : 'Sans root, NiTroiD obtient les droits ADB tout seul via le débogage sans fil '
+                      '(Android 11+), ou une fois depuis un PC.',
                 style: TextStyle(color: NxColors.muted, fontSize: 13),
               ),
               const SizedBox(height: 12),
@@ -103,11 +104,18 @@ class _DeveloperHubState extends State<DeveloperHub> with WidgetsBindingObserver
                   label: const Text('Débloquer toutes les permissions (root)'),
                 )
               else
-                OutlinedButton.icon(
-                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdbGuideScreen())),
-                  icon: const Icon(Icons.usb),
-                  label: const Text('Méthode ADB (sans root)'),
-                ),
+                Wrap(spacing: 8, runSpacing: 8, children: [
+                  FilledButton.icon(
+                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdbWirelessScreen())),
+                    icon: const Icon(Icons.wifi_tethering),
+                    label: const Text('ADB sans fil (sans PC)'),
+                  ),
+                  OutlinedButton.icon(
+                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdbGuideScreen())),
+                    icon: const Icon(Icons.usb),
+                    label: const Text('Depuis un PC'),
+                  ),
+                ]),
             ]),
           ),
           SectionHeader('Permissions avancées détenues ($held)'),
@@ -138,6 +146,13 @@ class _DeveloperHubState extends State<DeveloperHub> with WidgetsBindingObserver
                 subtitle: const Text('Débogage, animations, rendu, réseau — appliqués en direct', style: TextStyle(fontSize: 12)),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const DevOptionsScreen())),
+              ),
+              ListTile(
+                leading: const Icon(Icons.terminal),
+                title: const Text('Terminal (root ou ADB)', style: TextStyle(fontWeight: FontWeight.w600)),
+                subtitle: const Text('Commandes shell avec les droits élevés disponibles', style: TextStyle(fontSize: 12)),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PrivShellScreen())),
               ),
               ListTile(
                 leading: const Icon(Icons.receipt_long),

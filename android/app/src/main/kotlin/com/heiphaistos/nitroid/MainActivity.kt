@@ -80,6 +80,15 @@ class MainActivity : FlutterActivity() {
             "getSettings" -> Dev.getSettings(ctx, (args["keys"] as? List<*>)?.map { it.toString() } ?: emptyList())
             "putSetting" -> Dev.putSetting(ctx, args["ns"] as? String ?: "secure", args["key"] as? String ?: "", args["value"] as? String ?: "")
             "appAction" -> Dev.appAction(ctx, args["action"] as? String ?: "", args["pkg"] as? String ?: "")
+            "adbStatus" -> Adb.status(ctx) + mapOf("mode" to Priv.mode(ctx))
+            "adbSearch" -> Adb.startSearch(ctx)
+            "adbStopSearch" -> Adb.stopSearch(ctx)
+            "adbPair" -> Adb.pair(ctx, (args["port"] as? Number)?.toInt() ?: -1, args["code"] as? String ?: "")
+            "adbConnect" -> Adb.connect(ctx)
+            "adbDisconnect" -> Adb.disconnect()
+            "privShell" -> Priv.run(ctx, args["command"] as? String ?: "", 60).let {
+                mapOf("ok" to it.ok, "out" to it.out, "mode" to Priv.mode(ctx))
+            }
             else -> throw NotImplementedError(method)
         }
     }
@@ -87,6 +96,7 @@ class MainActivity : FlutterActivity() {
     private fun requestRuntimePermission(name: String): Boolean {
         val perms = when (name) {
             "location" -> arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
+            "notifications" -> if (android.os.Build.VERSION.SDK_INT >= 33) arrayOf(Manifest.permission.POST_NOTIFICATIONS) else return true
             else -> return false
         }
         if (perms.all { checkSelfPermission(it) == PackageManager.PERMISSION_GRANTED }) return true

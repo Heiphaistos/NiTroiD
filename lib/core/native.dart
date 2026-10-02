@@ -235,6 +235,30 @@ class Native {
   static Future<String> appAction(String action, String pkg) async =>
       await _call<String>('appAction', {'action': action, 'pkg': pkg}) ?? 'error';
 
+  // --- ADB sans fil (Android 11+) ---
+
+  /// {supported, paired, connected, wirelessOn, searching, pairingPort, mode: root|adb|none}
+  static Future<Map<String, dynamic>> adbStatus() async {
+    final res = await _call<Map<dynamic, dynamic>>('adbStatus');
+    return Map<String, dynamic>.from(res ?? const {});
+  }
+
+  static Future<bool> adbSearch() async => await _call<bool>('adbSearch') ?? false;
+  static Future<void> adbStopSearch() => _call<void>('adbStopSearch');
+
+  /// null si OK, sinon le message d'erreur.
+  static Future<String?> adbPair(String code, {int port = -1}) =>
+      _call<String>('adbPair', {'code': code, 'port': port});
+
+  static Future<String?> adbConnect() => _call<String>('adbConnect');
+  static Future<void> adbDisconnect() => _call<void>('adbDisconnect');
+
+  /// Commande avec les droits root ou ADB : {ok, out, mode}.
+  static Future<Map<String, dynamic>> privShell(String command) async {
+    final res = await _call<Map<dynamic, dynamic>>('privShell', {'command': command});
+    return Map<String, dynamic>.from(res ?? const {'ok': false, 'out': 'Indisponible', 'mode': 'none'});
+  }
+
   static Stream<String> logcatStream({String? filter}) =>
       _logcat.receiveBroadcastStream({'filter': filter}).map((e) => e.toString());
 }

@@ -78,4 +78,8 @@ flutter {
 dependencies {
     // FileProvider pour la mise à jour intégrée.
     implementation("androidx.core:core-ktx:1.13.1")
+    // ADB sans PC : appairage par code et shell ADB local (Android 11+).
+    implementation("com.github.MuntashirAkon:libadb-android:3.1.1")
+    implementation("org.bouncycastle:bcpkix-jdk15to18:1.81")
+    implementation("org.lsposed.hiddenapibypass:hiddenapibypass:6.1")
 }
