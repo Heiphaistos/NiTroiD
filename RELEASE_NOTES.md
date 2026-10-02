@@ -1,3 +1,8 @@
+## NiTroiD 0.1.1
+
+- Correctif : la section « Réseau mobile » ne s’interrompt plus sur les téléphones qui protègent l’état des données mobiles.
+- Correctif : flux des capteurs en direct plus robuste si le service capteurs est absent.
+
 ## NiTroiD 0.1.0 — première version
 
 L’édition mobile de NiTriTe : diagnostic, sécurité et maintenance pour Android et iOS.

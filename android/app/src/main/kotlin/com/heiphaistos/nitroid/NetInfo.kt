@@ -111,7 +111,7 @@ object NetInfo {
             add("Itinérance", tm.isNetworkRoaming)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) add("Emplacements SIM actifs", tm.activeModemCount)
             safe("Type de réseau") { networkType(tm.dataNetworkType) }
-            add("Données mobiles", if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) tm.isDataEnabled else null)
+            safe("Données mobiles") { tm.isDataEnabled }
         }
     }
 

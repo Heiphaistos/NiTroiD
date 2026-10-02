@@ -99,13 +99,14 @@ class SensorStream(private val activity: MainActivity) : EventChannel.StreamHand
 
     override fun onListen(arguments: Any?, events: EventChannel.EventSink) {
         val type = ((arguments as? Map<*, *>)?.get("type") as? Number)?.toInt() ?: Sensor.TYPE_ACCELEROMETER
-        val sensor = manager?.getDefaultSensor(type)
-        if (sensor == null) {
+        val sm = manager
+        val sensor = sm?.getDefaultSensor(type)
+        if (sm == null || sensor == null) {
             events.error("no_sensor", "Capteur indisponible", null)
             return
         }
         sink = events
-        manager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_UI)
+        sm.registerListener(this, sensor, SensorManager.SENSOR_DELAY_UI)
     }
 
     override fun onCancel(arguments: Any?) {
