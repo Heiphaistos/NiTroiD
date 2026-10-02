@@ -261,4 +261,23 @@ class Native {
 
   static Stream<String> logcatStream({String? filter}) =>
       _logcat.receiveBroadcastStream({'filter': filter}).map((e) => e.toString());
+
+  // --- Tests matériel ---
+
+  static const _mic = EventChannel('nitroid/mic');
+  static const _keys = EventChannel('nitroid/keys');
+
+  /// Joue un son. [channel] : 'left', 'right' ou 'both'. [sweep] = balayage de fréquence.
+  static Future<bool> playTone({double freq = 1000, int ms = 1500, String channel = 'both', bool sweep = false}) async =>
+      await _call<bool>('playTone', {'freq': freq, 'ms': ms, 'channel': channel, 'sweep': sweep}) ?? false;
+
+  static Future<void> stopTone() => _call('stopTone');
+
+  /// Niveau du micro en direct : [rms, peak] entre 0 et 1.
+  static Stream<List<double>> micStream() =>
+      _mic.receiveBroadcastStream().map((e) => (e as List).map((v) => (v as num).toDouble()).toList());
+
+  /// Appuis sur les boutons physiques : {key, down}.
+  static Stream<Map<String, dynamic>> keyStream() =>
+      _keys.receiveBroadcastStream().map((e) => Map<String, dynamic>.from(e as Map));
 }

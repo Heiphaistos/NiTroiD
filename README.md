@@ -27,7 +27,7 @@ dangereux… et donne accès aux menus cachés et réglages avancés.
 | **Lanceurs** : liste, ouverture, changement du lanceur par défaut | ✅ | — |
 | **Menus cachés** (*#*#4636#*#*, infos radio, journal des notifications, System UI Tuner…) et 50+ raccourcis de réglages | ✅ | réglages de l’app |
 | Réglages avancés : animations, DNS privé, écran allumé en charge, luminosité, veille | ✅ | — |
-| Tests matériel : pixels morts, tactile/multipoint, vibreur, flash, haut-parleur | ✅ | ✅ |
+| Tests matériel : haut-parleurs L/R, micro (niveau), caméras avant/arrière, boutons, vibreur, flash, tactile, pixels, proximité/lumière | ✅ | partiel (caméra, flash, vibreur, tactile) |
 | Benchmark CPU mono/multi, mémoire, stockage | ✅ | ✅ |
 | Outils réseau : ping, DNS, port, IP publique, débit ; analyseur Wi-Fi | ✅ | ✅ (sans scan Wi-Fi) |
 | logcat, dumpsys, explorateur /proc & /sys, getprop | ✅ | — |

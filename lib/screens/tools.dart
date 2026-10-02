@@ -12,6 +12,7 @@ import '../core/theme.dart';
 import '../widgets/common.dart';
 import 'apps.dart';
 import 'developer.dart';
+import 'hwtests.dart';
 import 'lan.dart';
 import 'privacy.dart';
 import 'report.dart';
@@ -34,9 +35,7 @@ class ToolsHub extends StatelessWidget {
           (Icons.privacy_tip_outlined, 'Confidentialité', 'Qui a accès à la caméra, au micro, aux SMS…', const PrivacyScreen()),
         ]),
       ('Tests matériel', [
-        (Icons.palette_outlined, 'Écran : pixels morts', 'Couleurs plein écran', const ScreenTest()),
-        (Icons.touch_app_outlined, 'Écran tactile', 'Zones mortes et multipoint', const TouchTest()),
-        (Icons.vibration, 'Vibreur, flash & haut-parleur', 'Tests rapides des actionneurs', const ActuatorTest()),
+        (Icons.devices, 'Suite de tests', 'Haut-parleurs, micro, caméras, boutons, tactile, vibreur…', const HardwareTestsHub()),
       ]),
       ('Performances', [
         (Icons.speed, 'Benchmark', 'CPU, mémoire, stockage', const BenchmarkScreen()),

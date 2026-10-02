@@ -1,3 +1,13 @@
+## NiTroiD 0.6.0 — suite de tests matériel
+
+Une vraie batterie de tests, dans Outils › Tests matériel :
+- **Haut-parleurs** (Android) : canaux gauche / droite / stéréo, tonalités 200 Hz–10 kHz et balayage de fréquence.
+- **Microphone** (Android) : niveau d’entrée en direct (barre + courbe), crête et maximum vus.
+- **Caméras** : aperçu en direct, bascule avant / arrière, flash (via module caméra, Android et iOS).
+- **Boutons physiques** (Android) : volume +/− et bouton caméra, détectés en direct.
+- **Vibreur** : intensités et motifs (triple, crescendo).
+- **Lampe (flash)**, **écran tactile** (multipoint), **pixels morts**, **proximité & luminosité** interactifs.
+
 ## NiTroiD 0.5.0 — ADB sans PC
 
 ### Droits ADB directement dans l'app (Android 11+)

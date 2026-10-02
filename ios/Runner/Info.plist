@@ -33,6 +33,8 @@
 		<string>zbra</string>
 		<string>filza</string>
 	</array>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>NiTroiD n’enregistre pas le son ; cette autorisation est requise par le module caméra.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>NiTroiD utilise le flash de l’appareil photo pour le test de la lampe torche.</string>
 	<key>NSFaceIDUsageDescription</key>
