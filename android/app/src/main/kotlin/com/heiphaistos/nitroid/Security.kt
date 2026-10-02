@@ -88,6 +88,7 @@ object Security {
         val rooted = indicators.isNotEmpty()
         s.section("État") {
             add("Appareil rooté", if (rooted) "OUI" else "non détecté")
+            add("Accès superutilisateur", if (Root.available()) "fonctionnel (su répond)" else "non accordé à NiTroiD")
             add("Méthode", method)
             add("Indices trouvés", indicators.size.takeIf { it > 0 })
             add("Bootloader", when (Sys.prop("ro.boot.flash.locked")) {

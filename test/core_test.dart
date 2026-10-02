@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nitroid/core/benchmark.dart';
+import 'package:nitroid/core/dev_catalog.dart';
 import 'package:nitroid/core/format.dart';
 import 'package:nitroid/core/lan.dart';
 import 'package:nitroid/core/native.dart';
@@ -229,6 +230,27 @@ void main() {
       expect(rateCharger(300).$1, 'bad');
       expect(rateCharger(900).$1, 'warn');
       expect(rateCharger(2000).$1, 'ok');
+    });
+  });
+
+  group('options développeur', () {
+    test('allDevKeys sans doublon de format ns:key', () {
+      final keys = allDevKeys();
+      expect(keys, isNotEmpty);
+      expect(keys.every((k) => k.contains(':')), isTrue);
+    });
+
+    test('isToggleOn : binaire 0/1', () {
+      const t = DevToggle('system', 'show_touches', 'x');
+      expect(isToggleOn(t, '1'), isTrue);
+      expect(isToggleOn(t, '0'), isFalse);
+      expect(isToggleOn(t, null), isFalse);
+    });
+
+    test('isToggleOn : valeur on personnalisée', () {
+      const t = DevToggle('global', 'stay_on_while_plugged_in', 'x', onValue: '7');
+      expect(isToggleOn(t, '7'), isTrue);
+      expect(isToggleOn(t, '1'), isFalse);
     });
   });
 }

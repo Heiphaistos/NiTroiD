@@ -53,6 +53,7 @@ class MainActivity : FlutterActivity() {
         }
 
         EventChannel(messenger, "nitroid/sensors").setStreamHandler(SensorStream(this))
+        EventChannel(messenger, "nitroid/logcat").setStreamHandler(LogcatStream())
     }
 
     private fun handleBackground(method: String, args: Map<*, *>): Any? {
@@ -74,6 +75,11 @@ class MainActivity : FlutterActivity() {
             "exec" -> Shell.tool(args)
             "listDir" -> Shell.listDir(args["path"] as? String ?: "/proc")
             "readFile" -> Shell.readFile(args["path"] as? String ?: "")
+            "rootAvailable" -> Root.available(args["force"] as? Boolean ?: false)
+            "grantSelf" -> Dev.grantSelf(ctx)
+            "getSettings" -> Dev.getSettings(ctx, (args["keys"] as? List<*>)?.map { it.toString() } ?: emptyList())
+            "putSetting" -> Dev.putSetting(ctx, args["ns"] as? String ?: "secure", args["key"] as? String ?: "", args["value"] as? String ?: "")
+            "appAction" -> Dev.appAction(ctx, args["action"] as? String ?: "", args["pkg"] as? String ?: "")
             else -> throw NotImplementedError(method)
         }
     }
@@ -125,4 +131,38 @@ class SensorStream(private val activity: MainActivity) : EventChannel.StreamHand
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
+}
+
+/** Diffuse le journal systeme en direct (logcat). Complet avec la permission READ_LOGS. */
+class LogcatStream : EventChannel.StreamHandler {
+    private var process: Process? = null
+    private var thread: Thread? = null
+
+    override fun onListen(arguments: Any?, events: EventChannel.EventSink) {
+        val filter = (arguments as? Map<*, *>)?.get("filter") as? String
+        val main = Handler(Looper.getMainLooper())
+        thread = Thread {
+            try {
+                val cmd = arrayListOf("logcat", "-v", "threadtime")
+                if (!filter.isNullOrBlank() && filter.matches(Regex("^[A-Za-z0-9_*:. -]{1,64}$"))) {
+                    cmd.add(filter)
+                }
+                val proc = ProcessBuilder(cmd).redirectErrorStream(true).start().also { process = it }
+                proc.inputStream.bufferedReader().use { r ->
+                    while (!Thread.currentThread().isInterrupted) {
+                        val line = r.readLine() ?: break
+                        main.post { events.success(line) }
+                    }
+                }
+            } catch (e: Throwable) {
+                main.post { events.error("logcat", e.message, null) }
+            }
+        }.also { it.start() }
+    }
+
+    override fun onCancel(arguments: Any?) {
+        thread?.interrupt()
+        process?.destroy()
+        process = null
+    }
 }

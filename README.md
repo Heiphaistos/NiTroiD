@@ -36,6 +36,8 @@ dangereux… et donne accès aux menus cachés et réglages avancés.
 | Test du chargeur et du câble (courant de charge) | ✅ | — |
 | Mise à jour intégrée depuis les releases GitHub | ✅ | lien vers la release |
 | Thèmes (une douzaine, mémorisés) | ✅ | ✅ |
+| Centre développeur : root, octroi de permissions, options développeur, logcat live | ✅ | — |
+| Actions root sur les apps : arrêt forcé, vider cache/données, activer/désactiver | ✅ (root) | — |
 | Root / Jailbreak : analyse détaillée (méthode, modules, apps avec accès) | ✅ | ✅ (jailbreak) |
 | Rapport TXT / Markdown / JSON partageable | ✅ | ✅ |
 

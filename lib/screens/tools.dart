@@ -11,6 +11,7 @@ import '../core/native.dart';
 import '../core/theme.dart';
 import '../widgets/common.dart';
 import 'apps.dart';
+import 'developer.dart';
 import 'lan.dart';
 import 'privacy.dart';
 import 'report.dart';
@@ -22,6 +23,10 @@ class ToolsHub extends StatelessWidget {
   Widget build(BuildContext context) {
     final android = Native.isAndroid;
     final groups = <(String, List<(IconData, String, String, Widget)>)>[
+      if (android)
+        ('Développeur', [
+          (Icons.code, 'Centre développeur', 'Root, permissions, options développeur, logcat', const DeveloperHub()),
+        ]),
       if (android)
         ('Applications', [
           (Icons.apps, 'Gestionnaire d’applications', 'Lister, analyser, désinstaller', const AppsScreen()),

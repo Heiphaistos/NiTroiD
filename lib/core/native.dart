@@ -207,4 +207,34 @@ class Native {
       await _call<String>('installApk', {'path': path}) ?? 'error';
 
   static Future<bool> openUrl(String url) async => await _call<bool>('openUrl', {'url': url}) ?? false;
+
+  // --- Outils développeur / root (Android) ---
+
+  static const _logcat = EventChannel('nitroid/logcat');
+
+  static Future<bool> rootAvailable({bool force = false}) async =>
+      await _call<bool>('rootAvailable', {'force': force}) ?? false;
+
+  /// Accorde à NiTroiD les permissions avancées via root. {root, results:[{perm,ok,detail}]}
+  static Future<Map<String, dynamic>> grantSelf() async {
+    final res = await _call<Map<dynamic, dynamic>>('grantSelf');
+    return Map<String, dynamic>.from(res ?? const {});
+  }
+
+  /// Lit un lot de réglages « ns:key » → valeur (ou null).
+  static Future<Map<String, String?>> getSettings(List<String> keys) async {
+    final res = await _call<Map<dynamic, dynamic>>('getSettings', {'keys': keys});
+    return {for (final e in (res ?? const {}).entries) e.key.toString(): e.value?.toString()};
+  }
+
+  /// Écrit un réglage. Renvoie null si OK, sinon un message d'erreur.
+  static Future<String?> putSetting(String ns, String key, String value) =>
+      _call<String>('putSetting', {'ns': ns, 'key': key, 'value': value});
+
+  /// Action avancée sur une app (root requis) : forceStop, clearData, clearCache, disable, enable.
+  static Future<String> appAction(String action, String pkg) async =>
+      await _call<String>('appAction', {'action': action, 'pkg': pkg}) ?? 'error';
+
+  static Stream<String> logcatStream({String? filter}) =>
+      _logcat.receiveBroadcastStream({'filter': filter}).map((e) => e.toString());
 }

@@ -231,6 +231,7 @@ class AppDetailScreen extends StatelessWidget {
                 label: Text(app.system ? 'Désinstaller les MAJ' : 'Désinstaller'),
               ),
           ]),
+          _RootAppActions(app: app),
           if (risk.reasons.isNotEmpty) ...[
             const SectionHeader('Pourquoi ce score'),
             NxCard(
@@ -391,5 +392,69 @@ class _UsageScreenState extends State<UsageScreen> with WidgetsBindingObserver {
               ],
             ),
     );
+  }
+}
+
+/// Actions avancées sur une app, visibles uniquement si le root est disponible.
+class _RootAppActions extends StatefulWidget {
+  const _RootAppActions({required this.app});
+
+  final AppEntry app;
+
+  @override
+  State<_RootAppActions> createState() => _RootAppActionsState();
+}
+
+class _RootAppActionsState extends State<_RootAppActions> {
+  bool _root = false;
+  bool _busy = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Native.rootAvailable().then((r) {
+      if (mounted) setState(() => _root = r);
+    });
+  }
+
+  Future<void> _run(String action, String label) async {
+    setState(() => _busy = true);
+    final res = await Native.appAction(action, widget.app.package);
+    if (!mounted) return;
+    setState(() => _busy = false);
+    showSnack(context, res == 'ok' ? '$label : fait' : res);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_root) return const SizedBox.shrink();
+    final enabled = widget.app.enabled;
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      const SectionHeader('Actions root'),
+      NxCard(
+        child: Wrap(spacing: 8, runSpacing: 8, children: [
+          OutlinedButton.icon(
+            onPressed: _busy ? null : () => _run('forceStop', 'Arrêt forcé'),
+            icon: const Icon(Icons.stop_circle_outlined, size: 18),
+            label: const Text('Arrêt forcé'),
+          ),
+          OutlinedButton.icon(
+            onPressed: _busy ? null : () => _run('clearCache', 'Cache vidé'),
+            icon: const Icon(Icons.cleaning_services_outlined, size: 18),
+            label: const Text('Vider le cache'),
+          ),
+          OutlinedButton.icon(
+            onPressed: _busy ? null : () => _run('clearData', 'Données effacées'),
+            icon: const Icon(Icons.delete_sweep_outlined, size: 18),
+            label: const Text('Effacer les données'),
+          ),
+          OutlinedButton.icon(
+            onPressed: _busy ? null : () => _run(enabled ? 'disable' : 'enable', enabled ? 'Désactivée' : 'Activée'),
+            icon: Icon(enabled ? Icons.block : Icons.check_circle_outline, size: 18),
+            label: Text(enabled ? 'Désactiver' : 'Activer'),
+          ),
+        ]),
+      ),
+    ]);
   }
 }

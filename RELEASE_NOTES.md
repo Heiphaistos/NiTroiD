@@ -1,3 +1,17 @@
+## NiTroiD 0.4.0 — édition développeur
+
+### Centre développeur (Outils › Développeur, Android)
+- **Root** : détection de l’accès superutilisateur fonctionnel.
+- **Débloquer les permissions en un geste** (si root) : NiTroiD s’accorde WRITE_SECURE_SETTINGS, READ_LOGS, DUMP et l’accès aux données d’utilisation via root, sans passer par un PC.
+- **Options pour les développeurs** appliquées en direct : débogage USB/sans fil, rester allumé en charge, afficher les appuis, position du pointeur, limites de mise en page, dépassement GPU, échelles d’animation, ne pas conserver les activités, données mobiles toujours actives, recherche Wi-Fi permanente… (via WRITE_SECURE_SETTINGS ou root).
+- **Journal système en direct** (logcat) : flux temps réel, filtre, erreurs seules, pause, copie.
+
+### Actions root sur les applications
+Dans le détail d’une application, si le root est disponible : arrêt forcé, vider le cache, effacer les données, activer/désactiver.
+
+### Analyse root approfondie
+L’écran Root indique désormais si l’accès superutilisateur répond réellement (su).
+
 ## NiTroiD 0.3.0
 
 ### Nouveautés
