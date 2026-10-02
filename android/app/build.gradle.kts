@@ -30,34 +30,23 @@ android {
     }
 
     // Signature de release : clé privée via android/key.properties (local) ou secrets
-    // de la CI si fournis. Sinon, repli sur la clé PARTAGÉE commitée dans le dépôt
-    // (keystore/nitroid-shared.jks, mot de passe public) : ainsi tous les builds
-    // signent avec la même clé et les mises à jour s'installent par-dessus sans
-    // désinstaller. À remplacer par une vraie clé pour une distribution sérieuse.
+    // NITROID_KEYSTORE_* de la CI. Jamais de clé publique commitée : n'importe qui
+    // pourrait signer une fausse mise à jour. Sans clé, repli sur la clé debug (la CI
+    // refuse alors de publier).
     val keyProps = Properties().apply {
         val f = rootProject.file("key.properties")
         if (f.exists()) f.inputStream().use { load(it) }
     }
     fun secret(name: String, env: String): String? = keyProps.getProperty(name) ?: System.getenv(env)
     val storePath = secret("storeFile", "NITROID_KEYSTORE")
-    val sharedKey = rootProject.file("../keystore/nitroid-shared.jks")
-    // true dès qu'une clé stable est disponible (secret CI/local OU clé partagée commitée).
-    val hasStableKey = (storePath != null && file(storePath).exists()) || sharedKey.exists()
 
     signingConfigs {
-        if (hasStableKey) {
+        if (storePath != null && file(storePath).exists()) {
             create("release") {
-                if (storePath != null && file(storePath).exists()) {
-                    storeFile = file(storePath)
-                    storePassword = secret("storePassword", "NITROID_KEYSTORE_PASSWORD")
-                    keyAlias = secret("keyAlias", "NITROID_KEY_ALIAS")
-                    keyPassword = secret("keyPassword", "NITROID_KEY_PASSWORD")
-                } else {
-                    storeFile = sharedKey
-                    storePassword = "nitroid-shared"
-                    keyAlias = "nitroid"
-                    keyPassword = "nitroid-shared"
-                }
+                storeFile = file(storePath)
+                storePassword = secret("storePassword", "NITROID_KEYSTORE_PASSWORD")
+                keyAlias = secret("keyAlias", "NITROID_KEY_ALIAS")
+                keyPassword = secret("keyPassword", "NITROID_KEY_PASSWORD")
             }
         }
     }

@@ -94,28 +94,11 @@ puis ajouter dans *Settings › Secrets and variables › Actions* : `NITROID_KE
 
 ## Signature Android (mises à jour installables par-dessus)
 
-Chaque compilation de la CI signe l'APK. Pour que les mises à jour s'installent sans désinstaller, **tous les builds doivent utiliser la même clé**. Deux options :
+Tous les APK publiés par la CI sont signés avec la **même clé privée**, fournie par les secrets du dépôt : `NITROID_KEYSTORE_BASE64`, `NITROID_KEYSTORE_PASSWORD`, `NITROID_KEY_ALIAS`, `NITROID_KEY_PASSWORD`. Les mises à jour s'installent donc par-dessus sans désinstaller (à partir de la 0.3.0 ; la 0.2.0 et avant, signées avec une clé de debug, demandent une désinstallation une fois).
 
-**Option A — clé partagée commitée (simple, comme Forge Audio).**
-Une clé a été générée dans `keystore/nitroid-shared.jks` (mot de passe public `nitroid-shared`, alias `nitroid`). Le `build.gradle.kts` l'utilise automatiquement si elle est présente. Il reste à la commiter une fois :
-
-```bash
-git add -f keystore/nitroid-shared.jks && git commit -m "Clé de signature partagée" && git push
-```
-
-(Je n'ai pas pu la commiter moi-même : un garde-fou interdit à l'assistant d'ajouter un fichier de clé au dépôt.) N'importe qui peut alors signer un APK « compatible » : acceptable pour démarrer, à remplacer par l'option B pour une vraie distribution.
-
-**Option B — clé privée via secrets (recommandé).**
-Créez votre clé et gardez-la secrète :
-
-```bash
-keytool -genkeypair -keystore release.jks -alias nitroid -keyalg RSA -keysize 4096 -validity 10000
-base64 -w0 release.jks   # valeur du secret NITROID_KEYSTORE_BASE64
-```
-
-Puis dans *Settings › Secrets and variables › Actions* du dépôt NiTroiD, ajoutez : `NITROID_KEYSTORE_BASE64`, `NITROID_KEYSTORE_PASSWORD`, `NITROID_KEY_ALIAS` (`nitroid`), `NITROID_KEY_PASSWORD`. La CI s'en sert alors à la place de la clé partagée.
-
-Sans aucune des deux, l'APK est signé avec la clé de debug (différente à chaque machine) : les mises à jour imposent de désinstaller d'abord.
+- La CI **refuse de compiler** hors pull request si la clé manque : jamais de release signée avec une clé de debug.
+- Ne jamais commiter de keystore (`*.jks` est ignoré) : une clé publique permettrait à n'importe qui de fabriquer une fausse mise à jour.
+- Build local signé : créer `android/key.properties` (`storeFile`, `storePassword`, `keyAlias`, `keyPassword`), non versionné.
 
 ## Crédits
 
