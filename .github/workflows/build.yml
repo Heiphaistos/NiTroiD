@@ -55,8 +55,12 @@ jobs:
           if [ -n "$KEYSTORE_BASE64" ]; then
             echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/nitroid.jks"
             echo "NITROID_KEYSTORE=$RUNNER_TEMP/nitroid.jks" >> "$GITHUB_ENV"
+          elif [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "::warning::Aucune clé NITROID_KEYSTORE_BASE64 : APK de test signé avec une clé de debug."
           else
-            echo "::warning::Aucune clé NITROID_KEYSTORE_BASE64 : APK signé avec une clé de debug."
+            # Une clé debug change à chaque machine : la mise à jour suivante refuserait de s'installer par-dessus.
+            echo "::error::Secret NITROID_KEYSTORE_BASE64 manquant : refus de publier un APK signé avec une clé debug."
+            exit 1
           fi
       - name: Compilation
         env:
