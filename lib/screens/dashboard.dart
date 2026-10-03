@@ -7,6 +7,7 @@ import '../core/native.dart';
 import '../core/theme.dart';
 import '../core/updater.dart';
 import '../widgets/common.dart';
+import 'thermal.dart';
 import 'about.dart';
 import 'diagnostic.dart';
 import 'report.dart';

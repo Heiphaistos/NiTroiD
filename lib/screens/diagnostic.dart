@@ -7,6 +7,7 @@ import '../core/lan.dart';
 import '../core/native.dart';
 import '../core/theme.dart';
 import '../widgets/common.dart';
+import 'thermal.dart';
 
 class DiagnosticHub extends StatelessWidget {
   const DiagnosticHub({super.key});
@@ -272,89 +273,6 @@ class _BatteryScreenState extends State<BatteryScreen> with LivePolling {
         Text(label, style: TextStyle(color: NxColors.muted, fontSize: 12)),
         Text(value, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
       ]);
-}
-
-class ThermalScreen extends StatefulWidget {
-  const ThermalScreen({super.key});
-
-  @override
-  State<ThermalScreen> createState() => _ThermalScreenState();
-}
-
-class _ThermalScreenState extends State<ThermalScreen> with LivePolling {
-  final _history = <String, List<double>>{};
-
-  @override
-  void initState() {
-    super.initState();
-    startPolling(const Duration(seconds: 2));
-  }
-
-  @override
-  void onLive(Map<String, dynamic> data) {
-    for (final z in (data['thermalZones'] as List? ?? const [])) {
-      final t = normalizeThermal(z['temp'] as num?);
-      if (t == null) continue;
-      final h = _history.putIfAbsent(z['name'].toString(), () => []);
-      h.add(t);
-      if (h.length > 30) h.removeAt(0);
-    }
-    final b = (data['batteryTemp'] as num?)?.toDouble();
-    if (b != null) {
-      final h = _history.putIfAbsent('Batterie', () => []);
-      h.add(b);
-      if (h.length > 30) h.removeAt(0);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final zones = _history.entries.toList()..sort((a, b) => b.value.last.compareTo(a.value.last));
-    return Scaffold(
-      appBar: AppBar(title: const Text('Températures')),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          NxCard(
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('État thermique système', style: TextStyle(color: NxColors.muted, fontSize: 12)),
-              const SizedBox(height: 4),
-              Text(live['thermalStatus']?.toString() ?? '—', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800)),
-              if (live['thermalHeadroom'] != null)
-                Text('Marge avant bridage : ${live['thermalHeadroom']}', style: TextStyle(color: NxColors.muted, fontSize: 12)),
-            ]),
-          ),
-          const SectionHeader('Capteurs de température'),
-          if (zones.isEmpty)
-            const EmptyState(
-              icon: Icons.thermostat,
-              text: 'Ce système ne laisse lire aucune zone thermique en dehors de la batterie.',
-            ),
-          for (final z in zones)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: NxCard(
-                child: Row(children: [
-                  Expanded(
-                    flex: 4,
-                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Text(z.key, style: const TextStyle(fontWeight: FontWeight.w600), overflow: TextOverflow.ellipsis),
-                      Text('${z.value.last.toStringAsFixed(1)} °C',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w800,
-                            color: z.value.last > 60 ? NxColors.bad : z.value.last > 45 ? NxColors.warn : NxColors.ok,
-                          )),
-                    ]),
-                  ),
-                  Expanded(flex: 5, child: Sparkline(z.value, color: NxColors.accent, height: 36)),
-                ]),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
 }
 
 class SensorsScreen extends StatefulWidget {

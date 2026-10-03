@@ -1,3 +1,14 @@
+## NiTroiD 0.7.0 — températures détaillées, bas d’écran corrigé
+
+### Températures
+- Avec les droits ADB (sans PC) ou le root : **tous les capteurs du système thermique** — CPU, GPU, coque, port USB, modem, NPU, caméra… — regroupés par catégorie, avec leur **seuil de bridage** et l’état de bridage en cours.
+- Minimum et maximum de la session pour chaque capteur, courbe en direct, point le plus chaud.
+- **Prévision à 10 s** de la marge avant bridage.
+- Noms lisibles pour les zones thermiques brutes (gpuss, skin-therm, xo-therm…).
+
+### Affichage
+- Le bas des pages n’est plus rogné et ne passe plus sous les boutons retour / accueil / applications : une bande de la couleur de l’app les sépare du contenu.
+
 ## NiTroiD 0.6.0 — suite de tests matériel
 
 Une vraie batterie de tests, dans Outils › Tests matériel :

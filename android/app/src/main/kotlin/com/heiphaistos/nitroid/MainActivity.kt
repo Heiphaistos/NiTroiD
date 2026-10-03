@@ -105,6 +105,7 @@ class MainActivity : FlutterActivity() {
             "getSettings" -> Dev.getSettings(ctx, (args["keys"] as? List<*>)?.map { it.toString() } ?: emptyList())
             "putSetting" -> Dev.putSetting(ctx, args["ns"] as? String ?: "secure", args["key"] as? String ?: "", args["value"] as? String ?: "")
             "appAction" -> Dev.appAction(ctx, args["action"] as? String ?: "", args["pkg"] as? String ?: "")
+            "thermalDetail" -> Thermal.detail(ctx)
             "adbStatus" -> Adb.status(ctx) + mapOf("mode" to Priv.mode(ctx))
             "adbSearch" -> Adb.startSearch(ctx)
             "adbStopSearch" -> Adb.stopSearch(ctx)

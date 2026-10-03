@@ -28,6 +28,13 @@ class NitroidApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: buildTheme(themes.theme),
         home: HomeShell(themes: themes),
+        // L'app se dessine sous les barres système (bord à bord) : sans cette
+        // marge, le bas des pages passe sous les boutons retour/accueil/applis
+        // et se fait rogner. La bande prend la couleur de la barre de navigation.
+        builder: (context, child) => ColoredBox(
+          color: Theme.of(context).navigationBarTheme.backgroundColor ?? Theme.of(context).colorScheme.surface,
+          child: SafeArea(top: false, left: false, right: false, child: child!),
+        ),
       ),
     );
   }

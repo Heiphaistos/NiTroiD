@@ -197,9 +197,9 @@ void applySystemBars() {
     statusBarBrightness: dark ? Brightness.dark : Brightness.light,
     systemNavigationBarColor: Colors.transparent,
     systemNavigationBarIconBrightness: dark ? Brightness.light : Brightness.dark,
-    // true : Android dessine un léger voile derrière les boutons de navigation
-    // pour qu'ils restent distincts et ne « fusionnent » pas avec l'app.
-    systemNavigationBarContrastEnforced: true,
+    // false : l'app pose elle-même une bande opaque sous les boutons (voir
+    // MaterialApp.builder) ; le voile gris d'Android ferait double emploi.
+    systemNavigationBarContrastEnforced: false,
   ));
 }
 
@@ -239,7 +239,7 @@ ThemeData buildTheme(NxTheme t) {
         statusBarBrightness: t.isDark ? Brightness.dark : Brightness.light,
         systemNavigationBarColor: Colors.transparent,
         systemNavigationBarIconBrightness: t.isDark ? Brightness.light : Brightness.dark,
-        systemNavigationBarContrastEnforced: true,
+        systemNavigationBarContrastEnforced: false,
       ),
       titleTextStyle: TextStyle(
         fontSize: 20, fontWeight: FontWeight.w700, letterSpacing: 0.3, color: onSurface,

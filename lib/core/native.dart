@@ -235,6 +235,13 @@ class Native {
   static Future<String> appAction(String action, String pkg) async =>
       await _call<String>('appAction', {'action': action, 'pkg': pkg}) ?? 'error';
 
+  /// Températures détaillées : {source: hal|shell|none, sensors:[{name,kind,type,temp,status,severe,critical}],
+  /// zones:[{name,temp}], dump, headroom10s}.
+  static Future<Map<String, dynamic>> thermalDetail() async {
+    final res = await _call<Map<dynamic, dynamic>>('thermalDetail');
+    return Map<String, dynamic>.from(res ?? const {});
+  }
+
   // --- ADB sans fil (Android 11+) ---
 
   /// {supported, paired, connected, wirelessOn, searching, pairingPort, mode: root|adb|none}
