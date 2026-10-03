@@ -1,7 +1,7 @@
 name: nitroid
 description: "NiTroiD — diagnostic, sécurité et maintenance pour Android et iOS. Édition mobile de NiTriTe."
 publish_to: 'none'
-version: 0.7.0+8
+version: 0.8.0+9
 
 environment:
   sdk: ^3.13.5

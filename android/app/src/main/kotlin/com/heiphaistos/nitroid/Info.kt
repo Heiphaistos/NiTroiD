@@ -199,6 +199,23 @@ object Info {
         null
     }
 
+    /** Mesure ponctuelle pour le test d'autonomie (charge en mAh via le compteur de charge). */
+    fun batterySample(ctx: Context): Map<String, Any?> {
+        val i = batteryIntent(ctx)
+        val bm = ctx.getSystemService(BatteryManager::class.java)
+        val chargeUah = bm?.getIntProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER) ?: Int.MIN_VALUE
+        return mapOf(
+            "time" to SystemClock.elapsedRealtime(),
+            "level" to i?.let { it.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) * 100.0 / it.getIntExtra(BatteryManager.EXTRA_SCALE, 100).coerceAtLeast(1) },
+            "chargeMah" to if (chargeUah > 0) (if (chargeUah > 100000) chargeUah / 1000.0 else chargeUah.toDouble()) else null,
+            "currentMa" to bm?.let { currentMa(it.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW)) },
+            "voltageMv" to i?.getIntExtra(BatteryManager.EXTRA_VOLTAGE, 0),
+            "temp" to i?.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0)?.div(10.0),
+            "plugged" to ((i?.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0) ?: 0) != 0),
+            "designMah" to designCapacityMah(ctx),
+        )
+    }
+
     private fun battery(ctx: Context): List<Map<String, Any>> {
         val s = Sections()
         val i = batteryIntent(ctx) ?: return s.list

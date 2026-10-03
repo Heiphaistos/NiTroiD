@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import '../core/native.dart';
 import '../core/theme.dart';
 import '../widgets/common.dart';
+import 'battery_life.dart';
 import 'diagnostic.dart';
 import 'tools.dart';
 
@@ -19,6 +20,7 @@ class HardwareTestsHub extends StatelessWidget {
     final tests = <(IconData, String, String, Widget)>[
       if (android) (Icons.volume_up, 'Haut-parleurs', 'Gauche / droite / stéréo / balayage', const SpeakerTest()),
       if (android) (Icons.mic, 'Microphone', 'Niveau d’entrée en direct', const MicTest()),
+      if (android) (Icons.battery_charging_full, 'Autonomie batterie', 'Consommation réelle, autonomie, usure', const BatteryLifeTest()),
       (Icons.vibration, 'Vibreur', 'Intensités et motifs', const VibratorTest()),
       (Icons.flashlight_on, 'Lampe (flash)', 'Allumage du flash arrière', const FlashTest()),
       (Icons.photo_camera, 'Caméras', 'Avant et arrière, aperçu en direct', const CameraTest()),

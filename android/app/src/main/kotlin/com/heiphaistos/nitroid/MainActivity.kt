@@ -49,6 +49,12 @@ class MainActivity : FlutterActivity() {
                 "appInfo" -> result.success(Actions.appInfo(this))
                 "installApk" -> result.success(Actions.installApk(this, call.argument("path") ?: ""))
                 "openUrl" -> result.success(Actions.openUrl(this, call.argument("url") ?: ""))
+                "keepScreenOn" -> {
+                    // Test d'autonomie : l'écran ne doit pas se mettre en veille pendant la mesure.
+                    if (call.argument<Boolean>("on") == true) window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                    else window.clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                    result.success(true)
+                }
                 else -> worker.execute {
                     val value = try {
                         handleBackground(call.method, call.arguments as? Map<*, *> ?: emptyMap<String, Any>())
@@ -106,6 +112,7 @@ class MainActivity : FlutterActivity() {
             "putSetting" -> Dev.putSetting(ctx, args["ns"] as? String ?: "secure", args["key"] as? String ?: "", args["value"] as? String ?: "")
             "appAction" -> Dev.appAction(ctx, args["action"] as? String ?: "", args["pkg"] as? String ?: "")
             "thermalDetail" -> Thermal.detail(ctx)
+            "batterySample" -> Info.batterySample(ctx)
             "adbStatus" -> Adb.status(ctx) + mapOf("mode" to Priv.mode(ctx))
             "adbSearch" -> Adb.startSearch(ctx)
             "adbStopSearch" -> Adb.stopSearch(ctx)

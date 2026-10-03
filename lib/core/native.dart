@@ -242,6 +242,14 @@ class Native {
     return Map<String, dynamic>.from(res ?? const {});
   }
 
+  /// Mesure pour le test d'autonomie : {time, level, chargeMah, currentMa, voltageMv, temp, plugged, designMah}.
+  static Future<Map<String, dynamic>> batterySample() async {
+    final res = await _call<Map<dynamic, dynamic>>('batterySample');
+    return Map<String, dynamic>.from(res ?? const {});
+  }
+
+  static Future<void> keepScreenOn(bool on) => _call<bool>('keepScreenOn', {'on': on});
+
   // --- ADB sans fil (Android 11+) ---
 
   /// {supported, paired, connected, wirelessOn, searching, pairingPort, mode: root|adb|none}

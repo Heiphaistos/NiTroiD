@@ -1,3 +1,12 @@
+## NiTroiD 0.8.0 — test d’autonomie batterie
+
+### Nouveau test matériel : Autonomie batterie
+- Mesure de **5, 15 ou 30 minutes**, chargeur débranché, écran maintenu allumé : NiTroiD lit le compteur de charge toutes les 5 s.
+- **Consommation moyenne** (mA), **% perdu par heure**, **autonomie restante** et **autonomie sur une charge pleine**.
+- **Capacité réelle** comparée à la capacité d’origine → **santé de la batterie** et verdict (bon état / fatiguée / à remplacer).
+- Si le téléphone a un compteur de charge figé ou absent, l’autonomie est extrapolée du % perdu et aucun faux verdict n’est affiché.
+- Mesure interrompue automatiquement si le chargeur est rebranché.
+
 ## NiTroiD 0.7.0 — températures détaillées, bas d’écran corrigé
 
 ### Températures
